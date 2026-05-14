@@ -1,0 +1,64 @@
+name: AliienResize
+version: '${project.version}'
+main: com.aliiensmp.aliienResize.AliienResize
+api-version: '1.21'
+softdepend: [Vault, PlaceholderAPI, PlayerPoints, UltraEconomy, CoinsEngine, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy]
+
+commands:
+  resize:
+    description: Main command for AliienResize.
+    aliases: [resize, size]
+
+permissions:
+  aliien.*:
+    description: Grants access to EVERY Aliien plugin permission.
+    default: op
+    children:
+      aliien.resize.*: true
+
+  aliien.resize.*:
+    description: Grants access to all AliienResize player and admin permissions.
+    default: op
+    children:
+      aliien.resize.use: true
+      aliien.resize.set: true
+      aliien.resize.clear: true
+
+  aliien.resize.admin.*:
+    description: Grants access to all Aliienresize admin commands.
+    default: op
+    children:
+      aliien.resize.admin: true
+      aliien.resize.admin.set: true
+      aliien.resize.admin.clear: true
+      aliien.resize.admin.reload: true
+
+  # Individual player perms
+  aliien.resize.menu:
+    description: Allows the player to open the resize GUI.
+    default: true
+
+  aliien.resize.set:
+    description: Allows the player to set a predefined size.
+    default: true
+
+  aliien.resize.clear:
+    description: Allows the player to clear their active size.
+    default: true
+
+  # Individual admin perms
+  aliien.resize.admin:
+    description: Permission all resize commands.
+    default: op
+
+  aliien.resize.admin.set:
+    description: Allows an admin to force-set another player's size.
+    default: op
+
+  aliien.resize.admin.clear:
+    description: Allows an admin to clear another player's size.
+    default: op
+
+  aliien.resize.admin.reload:
+    description: Allows an admin to reload the plugin configurations.
+    default: op

@@ -1,0 +1,60 @@
+# =======================================================
+# AliienResize - Sizes
+# =======================================================
+
+# This will override the lores of the items below if they are left empty []
+defaults:
+  lore:
+    - "<gray>Click to change your size</gray>"
+    - "<gray>to <white>%scale%x</white> scale!</gray>"
+  lore-without-perm:
+    - "<red>You do not have permission</red>"
+    - "<red>to use this size.</red>"
+    - ""
+    - "<gray>Requires: <white>%permission%</white></gray>"
+
+sizes:
+  tiny:
+    scale: 0.5
+    permission: "aliien.resize.tiny"
+    gui:
+      material: LIGHT_BLUE_DYE
+      slot: 12
+      page: 1
+      name: "<aqua><bold>Tiny Size</bold> <dark_gray>(0.5x)"
+      lore:
+        - "<gray>Click to shrink yourself down</gray>"
+        - "<gray>to half your normal size!</gray>"
+      lore-without-perm: [] # Empty lists will automatically use the defaults from above
+      model-data: 0
+      item-flags:
+        - HIDE_ATTRIBUTES
+    price:
+      enabled: false
+      currency: "VAULT"
+      amount: 0.0
+
+  huge:
+    scale: 2.0
+    permission: "aliien.resize.huge"
+    gui:
+      material: RED_DYE
+      slot: 14
+      page: 1
+      name: "<red><bold>Huge Size</bold> <dark_gray>(2.0x)"
+      lore: []
+      # We put the price placeholder here so they see the cost while it is locked!
+      lore-without-perm:
+        - "<gray>This size is currently locked!</gray>"
+        - ""
+        - "<white>Price: <gold>%price%</gold></white>"
+        - "<green>Click to purchase this size!</green>"
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: true
+      currency: "VAULT"
+      amount: 5000.0
+
+# DO NOT under any circumstance touch this unless you are told to by the official support
+config-version: 1

@@ -1,0 +1,33 @@
+# =======================================================
+# AliienResize - Confirmation Menu
+# =======================================================
+menu-settings:
+  title: "<dark_gray>Confirm Purchase?</dark_gray>"
+  rows: 3
+  # The item that represents the size that the player is purchasing will be displayed here
+  # The items displayed in this/these slots are exactly the same as to what is defined in sizes.yml
+  display-slots: [13]
+
+items:
+  confirm:
+    material: LIME_DYE
+    name: "<green><bold>Confirm Purchase</bold></green>"
+    slots: [ 11, 12 ]
+    lore:
+      - "<gray>Cost: <gold>%price%</gold></gray>"
+      - ""
+      - "<green>Click to confirm!</green>"
+    model-data: 0
+    item-flags: []
+
+  cancel:
+    material: RED_DYE
+    name: "<red><bold>Cancel</bold></red>"
+    slots: [ 14, 15 ]
+    lore:
+      - "<red>Click to cancel.</red>"
+    model-data: 0
+    item-flags: []
+
+# DO NOT under any circumstance touch this unless you are told to by the official support
+config-version: 1

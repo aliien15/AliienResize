@@ -1,0 +1,75 @@
+# =======================================================
+# AliienResize - Messages
+# =======================================================
+
+# Should the plugin check/notify for new updates?
+# Requires a reboot
+check-for-updates: true
+
+# Toggle the hooks
+hooks:
+  placeholder-api:
+    enabled: true
+  vault: # Keep this enabled if you are using the economy feature, even if you aren't using vault as a currency
+    enabled: true
+  experience: # This isn't a plugin, but by disabling this you avoid it being saved as a purchase option for no reason
+    enabled: false
+  player-points:
+    enabled: false
+  ultra-economy:
+    enabled: false
+    currencies: []
+  coins-engine: # Legacy version of ExcellentEconomy, may not work correctly on newer minecraft versions
+    enabled: false
+    currencies: []
+  excellent-economy:
+    enabled: false
+    currencies: []
+  eco-bits:
+    enabled: false
+    currencies: []
+  royale-economy:
+    enabled: false
+  redis-economy:
+    enabled: false
+    currencies: []
+  # Here you can set your own custom currency, even if it is not officially supported
+  # Requires PlaceholderAPI
+  custom-economy:
+    enabled: false
+    currencies:
+      vote_tokens: # Custom currency example
+        balance-placeholder: "%vote_balance%" # This has to be an unformatted placeholder (just the raw number)
+        withdraw-command: "vote take %player% %amount%" # This has to be a command (use %player% and %amount% placeholders)
+
+# Toggle the confirmation menu for purchases
+# I recommend leaving this enabled if you don't wanna hear complaints from your players misclicking everything
+confirmation-menu:
+  enabled: true
+
+# Blacklisted worlds, where players will have to have the
+# default player size/scale (1.0)
+blacklisted-worlds:
+  - "example-world"
+
+# Sounds settings
+sounds:
+  # If you set this to false you can ignore everything else in this sounds section
+  enabled: true
+
+  # Format: "sound_name:volume:pitch"
+  # You can use "NONE" if you want to disable a specific sound
+  # You can use Vanilla sounds or Custom Resource Pack sounds natively!
+
+  click: "UI_BUTTON_CLICK:1.0:1.0"
+  success: "ENTITY_PLAYER_LEVELUP:1.0:1.0"
+  error: "ENTITY_VILLAGER_NO:1.0:1.0"
+  clear: "ENTITY_EXPERIENCE_ORB_PICKUP:1.0:0.5"
+
+# Logs successful purchases into a .txt file inside the plugin folder
+purchase-logging:
+  enabled: true
+  file-name: "logs.txt"
+
+# DO NOT under any circumstance touch this unless you are told to by the official support
+config-version: 1

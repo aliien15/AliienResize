@@ -1,0 +1,42 @@
+# =======================================================
+# AliienResize - Main Menu
+# =======================================================
+menu-settings:
+  title: "<dark_gray>Select your Size</dark_gray>"
+  rows: 3
+  locked-material: BARRIER
+
+items:
+  clear_size:
+    action: "CLEAR"
+    material: BARRIER
+    name: "<red><bold>Reset Size</bold></red>"
+    slots: [ 22 ]
+    lore:
+      - "<gray>Click to reset your size</gray>"
+      - "<gray>back to normal (1.0x).</gray>"
+    model-data: 0
+    item-flags: []
+
+  previous:
+    action: "PREVIOUS_PAGE"
+    material: ARROW
+    name: "<yellow><bold>Previous Page</bold></yellow>"
+    slots: [ 18 ]
+    lore:
+      - "<gray>Go back to page %target_page%</gray>"
+    model-data: 0
+    item-flags: []
+
+  next:
+    action: "NEXT_PAGE"
+    material: ARROW
+    name: "<yellow><bold>Next Page</bold></yellow>"
+    slots: [ 26 ]
+    lore:
+      - "<gray>Go forward to page %target_page%</gray>"
+    model-data: 0
+    item-flags: []
+
+# DO NOT under any circumstance touch this unless you are told to by the official support
+config-version: 1

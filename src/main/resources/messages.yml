@@ -1,0 +1,29 @@
+# =======================================================
+# AliienResize - Messages
+# =======================================================
+messages:
+  prefix: "<green><bold>RESIZE</bold></green> <dark_gray>»</dark_gray> "
+  resize:
+    success: "&aYou have successfully resized!"
+    default: "&aYour size has been set back to default!"
+    fail: "&cThere is not enough space around you to resize!"
+  reload:
+    reloading: "&eReloading configurations..."
+    success: "&aAliienResize has been successfully reloaded!"
+    fail: "&cThere was an internal error while trying to reload AliienResize!"
+  purchase:
+    success: "&aYou have successfully purchased this size for %price%$!"
+    currency-unavailable: "&cThis currency is currently unavailable (this might be a misconfiguration bug)"
+    fail: "&cYou do not have enough money to buy this size! &8(%price%)"
+  no-permission: "&cYou do not have permission to do this!"
+  force-set:
+    player: "&aYour size was updated by an admin to %size_id%!"
+    admin: "&aSet %player%'s size to %size_id%!"
+    default-player: "&aYour size was cleared by an admin!"
+    default-admin: "&aCleared %player%'s size!"
+    not-enough-space: "&cNot enough space for %player% to resize!"
+  updates:
+    new-version: "&aA new AliienResize version is now available!"
+
+# DO NOT under any circumstance touch this unless you are told to by the official support
+config-version: 1
