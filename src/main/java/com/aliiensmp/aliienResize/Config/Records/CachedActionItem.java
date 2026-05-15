@@ -1,10 +1,11 @@
 package com.aliiensmp.aliienResize.Config.Records;
 
+import com.aliiensmp.aliienResize.Menus.MenuAction;
 import org.bukkit.inventory.ItemStack;
 
 public record CachedActionItem(
         int slot,
-        String action,
+        MenuAction action,
         int targetPage,
         ItemStack item
 ) {}

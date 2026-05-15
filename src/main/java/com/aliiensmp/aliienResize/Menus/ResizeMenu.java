@@ -71,11 +71,11 @@ public class ResizeMenu {
 
     private void handleActionClick(Player player, CachedActionItem cachedItem) {
         switch (cachedItem.action()) {
-            case "NEXT_PAGE", "PREVIOUS_PAGE" -> {
+            case NEXT_PAGE, PREVIOUS_PAGE -> {
                 Settings.CLICK_SOUND.play(player);
                 openMenu(player, cachedItem.targetPage());
             }
-            case "CLEAR" -> {
+            case CLEAR -> {
                 player.closeInventory();
 
                 runSync(player, () -> {
@@ -86,6 +86,7 @@ public class ResizeMenu {
                     Settings.CLEAR_SOUND.play(player);
                 });
             }
+            case NONE -> {}
         }
     }
 

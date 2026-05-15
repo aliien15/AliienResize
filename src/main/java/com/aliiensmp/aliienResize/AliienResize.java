@@ -160,7 +160,7 @@ public final class AliienResize extends JavaPlugin {
             currencyManager.loadCurrencies();
 
             confirmationMenuFile = ConfigManager.loadConfig(this, "confirmation-menu.yml");
-            confirmationMenu = new Confirmation();
+            confirmationMenu = new Confirmation(this);
             ConfigManager.bindConfig(confirmationMenuFile, "confirmation-menu.yml");
             confirmationMenu.loadFromConfig(confirmationMenuFile);
 

@@ -6,6 +6,7 @@ import com.aliiensmp.aliienResize.Config.Records.CachedSizeItem;
 import com.aliiensmp.aliienResize.Config.Records.GuiData;
 import com.aliiensmp.aliienResize.Config.Records.PriceData;
 import com.aliiensmp.aliienResize.Config.Records.SizeNode;
+import com.aliiensmp.aliienResize.Menus.MenuAction;
 import com.aliiensmp.core.items.ItemBuilder;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -35,7 +36,7 @@ public class Sizes {
 
     // Transport records for streams
     private record ParsedSizeEntry(SizeNode node, CachedSizeItem cachedItem, int page) {}
-    private record RawActionItem(String action, Material material, String name, List<Integer> slots, List<String> lore, int modelData, List<ItemFlag> flags) {}
+    private record RawActionItem(MenuAction action, Material material, String name, List<Integer> slots, List<String> lore, int modelData, List<ItemFlag> flags) {}
 
     public Sizes(AliienResize plugin) {
         this.plugin = plugin;
@@ -135,8 +136,16 @@ public class Sizes {
     }
 
     private RawActionItem parseRawActionItem(Section section, String rawKey) {
+        MenuAction parsedAction;
+        try {
+            parsedAction = MenuAction.valueOf(section.getString("action", "NONE").toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("Invalid action in main-menu.yml for item '" + rawKey + "'. Defaulting to NONE.");
+            parsedAction = MenuAction.NONE;
+        }
+
         return new RawActionItem(
-                section.getString("action", "NONE").toUpperCase(Locale.ROOT),
+                parsedAction,
                 parseMaterial(section.getString("material", "STONE"), Material.STONE, rawKey),
                 section.getString("name", " "),
                 section.getIntList("slots"),
@@ -175,18 +184,18 @@ public class Sizes {
         MENU_MAX_PAGE = Math.max(MENU_MAX_PAGE, entry.page());
     }
 
-    private boolean shouldDisplayOnPage(String action, int page) {
+    private boolean shouldDisplayOnPage(MenuAction action, int page) {
         return switch (action) {
-            case "NEXT_PAGE" -> page < MENU_MAX_PAGE;
-            case "PREVIOUS_PAGE" -> page > 1;
+            case NEXT_PAGE -> page < MENU_MAX_PAGE;
+            case PREVIOUS_PAGE -> page > 1;
             default -> true;
         };
     }
 
-    private int resolveTargetPage(String action, int page) {
+    private int resolveTargetPage(MenuAction action, int page) {
         return switch (action) {
-            case "NEXT_PAGE" -> page + 1;
-            case "PREVIOUS_PAGE" -> page - 1;
+            case NEXT_PAGE -> page + 1;
+            case PREVIOUS_PAGE -> page - 1;
             default -> page;
         };
     }

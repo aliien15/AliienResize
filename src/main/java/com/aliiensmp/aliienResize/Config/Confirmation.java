@@ -1,5 +1,7 @@
 package com.aliiensmp.aliienResize.Config;
 
+import com.aliiensmp.aliienResize.AliienResize;
+import com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction;
 import com.aliiensmp.core.config.Key;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -11,7 +13,11 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction.NONE;
+
 public class Confirmation {
+
+    private final AliienResize plugin;
 
     @Key("menu-settings.title")
     public static String CONFIRMATION_MENU_TITLE = "<dark_gray>Confirm Purchase?</dark_gray>";
@@ -24,7 +30,11 @@ public class Confirmation {
     public static ButtonData CONFIRMATION_MENU_CANCEL_BUTTON;
 
     // Internal record to cache raw button data
-    public record ButtonData(Material material, String name, List<String> lore, List<Integer> slots, int modelData, ItemFlag[] flags) {}
+    public record ButtonData(ConfirmationMenuAction action, Material material, String name, List<String> lore, List<Integer> slots, int modelData, ItemFlag[] flags) {}
+
+    public Confirmation(AliienResize plugin) {
+        this.plugin = plugin;
+    }
 
     public void loadFromConfig(YamlDocument config) {
 
@@ -36,6 +46,14 @@ public class Confirmation {
 
     private ButtonData parseButton(Section section, Material fallback) {
         return Optional.ofNullable(section).map(sec -> {
+            ConfirmationMenuAction action;
+            try {
+                action = ConfirmationMenuAction.valueOf(sec.getString("action", "NONE").toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Invalid action in confirmation-menu.yml for item '" + sec + "'. Defaulting to NONE.");
+                action = NONE;
+            }
+
             Material mat = Optional.ofNullable(Material.matchMaterial(sec.getString("material", "")))
                     .orElse(fallback);
 
@@ -51,6 +69,7 @@ public class Confirmation {
                     .toList();
 
             return new ButtonData(
+                    action,
                     mat,
                     sec.getString("name", " "),
                     sec.getStringList("lore"),
@@ -58,6 +77,6 @@ public class Confirmation {
                     sec.getInt("model-data", 0),
                     flags.toArray(ItemFlag[]::new)
             );
-        }).orElse(new ButtonData(fallback, "Error", List.of(), List.of(), 0, new ItemFlag[0]));
+        }).orElse(new ButtonData(NONE, fallback, "Error", List.of(), List.of(), 0, new ItemFlag[0]));
     }
 }
