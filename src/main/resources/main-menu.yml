@@ -3,15 +3,24 @@
 # =======================================================
 menu-settings:
   title: "<dark_gray>Select your Size</dark_gray>"
-  rows: 3
+  rows: 5
   locked-material: BARRIER
 
 items:
+  filler_glass:
+    action: "NONE"
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 39, 41, 43, 44 ]
+    lore: []
+    model-data: 0
+    item-flags: []
+
   clear_size:
     action: "CLEAR"
     material: BARRIER
     name: "<red><bold>Reset Size</bold></red>"
-    slots: [ 22 ]
+    slots: [ 40 ]
     lore:
       - "<gray>Click to reset your size</gray>"
       - "<gray>back to normal (1.0x).</gray>"
@@ -22,7 +31,7 @@ items:
     action: "PREVIOUS_PAGE"
     material: ARROW
     name: "<yellow><bold>Previous Page</bold></yellow>"
-    slots: [ 18 ]
+    slots: [ 38 ]
     lore:
       - "<gray>Go back to page %target_page%</gray>"
     model-data: 0
@@ -32,7 +41,7 @@ items:
     action: "NEXT_PAGE"
     material: ARROW
     name: "<yellow><bold>Next Page</bold></yellow>"
-    slots: [ 26 ]
+    slots: [ 42 ]
     lore:
       - "<gray>Go forward to page %target_page%</gray>"
     model-data: 0

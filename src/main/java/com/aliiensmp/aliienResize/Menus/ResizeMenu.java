@@ -20,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 import java.util.logging.Level;
 
+import static com.aliiensmp.aliienResize.Menus.MenuAction.NONE;
+
 public class ResizeMenu {
 
     private final AliienResize plugin;
@@ -47,12 +49,13 @@ public class ResizeMenu {
         Sizes.SIZE_ITEMS_BY_PAGE.get(page).forEach(cachedItem -> {
 
             SizeNode sizeNode = Sizes.SIZES_BY_ID.get(cachedItem.id());
-            boolean hasAccess = hasPermission(player, sizeNode.permission());;
-            ItemStack item = selectSizeItem(cachedItem, hasAccess, currentScale);
+            boolean hasAccess = hasPermission(player, sizeNode.permission());
+            ItemStack displayItem = selectSizeItem(cachedItem, hasAccess, currentScale);
+            ItemStack confirmationItem = cachedItem.availableItem().clone();
 
             gui.setItem(
                     cachedItem.slot(),
-                    ClickableItem.of(item, event -> handleSizeClick(player, sizeNode, page, item))
+                    ClickableItem.of(displayItem, event -> handleSizeClick(player, sizeNode, page, confirmationItem))
             );
         });
     }
@@ -61,7 +64,7 @@ public class ResizeMenu {
         Sizes.ACTION_ITEMS_BY_PAGE.get(page).forEach(cachedItem -> {
             ItemStack item = cachedItem.item().clone();
 
-            ClickableItem clickableItem = "NONE".equals(cachedItem.action())
+            ClickableItem clickableItem = NONE.equals(cachedItem.action())
                     ? ClickableItem.empty(item)
                     : ClickableItem.of(item, event -> handleActionClick(player, cachedItem));
 
@@ -72,7 +75,7 @@ public class ResizeMenu {
     private void handleActionClick(Player player, CachedActionItem cachedItem) {
         switch (cachedItem.action()) {
             case NEXT_PAGE, PREVIOUS_PAGE -> {
-                Settings.CLICK_SOUND.play(player);
+                if (Settings.SOUNDS_ENABLED) Settings.CLICK_SOUND.play(player);
                 openMenu(player, cachedItem.targetPage());
             }
             case CLEAR -> {
@@ -83,19 +86,18 @@ public class ResizeMenu {
                             .ifPresent(attribute -> attribute.setBaseValue(1.0));
 
                     MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_DEFAULT);
-                    Settings.CLEAR_SOUND.play(player);
+                    if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(player);
                 });
             }
             case NONE -> {}
         }
     }
 
-    private void handleSizeClick(Player player, SizeNode sizeNode, int currentPage, ItemStack displayItem) {
+    private void handleSizeClick(Player player, SizeNode sizeNode, int currentPage, ItemStack confirmationItem) {
         boolean hasAccess = hasPermission(player, sizeNode.permission());;
 
         if (hasAccess) {
             applyScale(player, sizeNode);
-            Settings.SUCCESS_SOUND.play(player);
             return;
         }
 
@@ -104,7 +106,7 @@ public class ResizeMenu {
                 new ConfirmationMenu().openMenu(
                         player,
                         sizeNode,
-                        displayItem,
+                        confirmationItem,
                         () -> handlePurchase(player, sizeNode),
                         () -> openMenu(player, currentPage)
                 );
@@ -120,20 +122,20 @@ public class ResizeMenu {
     private void handlePurchase(Player player, SizeNode sizeNode) {
         if (!plugin.getVaultExpansion().hasPermissions()){
             plugin.getLogger().log(Level.SEVERE, "Sizes purchase cancelled due to not finding any Vault permissions provider.");
-            Settings.ERROR_SOUND.play(player);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
 
             Bukkit.getOnlinePlayers().stream()
                     .filter(admin -> hasPermission(admin, "aliien.resize.admin"))
                     .forEach(admin -> {
                         MessageUtils.send(admin, Messages.PREFIX, "<red>Vault permissions provider is currently not setup properly, which just prevented a player from purchasing a size!");
-                        Settings.ERROR_SOUND.play(admin);
+                        if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(admin);
                     });
         }
 
         CurrencyProvider currency = plugin.getCurrencyManager().getCurrency(sizeNode.price().currency());
 
         if (currency == null || !currency.isValid()) {
-            Settings.ERROR_SOUND.play(player);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_UNAVAILABLE);
             return;
         }
@@ -142,20 +144,19 @@ public class ResizeMenu {
         String formattedPrice = (Math.rint(price) == price) ? String.valueOf((long) price) : String.valueOf(price);
 
         if (!currency.hasBalance(player, price)) {
-            Settings.ERROR_SOUND.play(player);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_FAIL.replace("%price%", formattedPrice));
             return;
         }
 
         if (!currency.withdraw(player, price)) {
-            Settings.ERROR_SOUND.play(player);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_UNAVAILABLE);
             return;
         }
 
         grantPermission(player, sizeNode.permission());
 
-        Settings.SUCCESS_SOUND.play(player);
         MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_SUCCESS.replace("%price%", formattedPrice));
 
         applyScale(player, sizeNode);
@@ -173,6 +174,7 @@ public class ResizeMenu {
     private void applyScale(Player player, SizeNode sizeNode) {
          if (!plugin.getResizeUtils().hasEnoughSpace(player, sizeNode.scale())) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             return;
         }
 
@@ -183,6 +185,7 @@ public class ResizeMenu {
                     .ifPresent(attribute -> attribute.setBaseValue(sizeNode.scale()));
 
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS);
+            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(player);
         });
     }
 

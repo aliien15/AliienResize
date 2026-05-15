@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-@CommandAlias("resize|size")
+@CommandAlias("resize")
 public class AdminCommands extends BaseCommand {
 
     private final AliienResize plugin;
@@ -28,7 +28,7 @@ public class AdminCommands extends BaseCommand {
     /**
      * Reloads all configuration files and caches.
      */
-    @Subcommand("admin reload|a reload")
+    @Subcommand("admin reload")
     @CommandPermission("aliien.resize.admin.reload")
     public void reloadConfigs(Player player) {
         MessageUtils.send(player, Messages.PREFIX, Messages.RELOADING);
@@ -38,7 +38,7 @@ public class AdminCommands extends BaseCommand {
     /**
      * Force-sets a size on a target player.
      */
-    @Subcommand("admin set|a set")
+    @Subcommand("admin set")
     @CommandPermission("aliien.resize.admin.set")
     @CommandCompletion("resize_ids")
     public void resizePlayer(Player sender, Player target, String sizeId) {
@@ -46,7 +46,7 @@ public class AdminCommands extends BaseCommand {
 
         if (!plugin.getResizeUtils().hasEnoughSpace(target, sizeNode.scale())) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.getName()));
-            Settings.ERROR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(sender);
             return;
         }
 
@@ -56,14 +56,14 @@ public class AdminCommands extends BaseCommand {
 
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.getName()).replace("size_id", sizeId));
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeId));
-            Settings.SUCCESS_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(sender);
         }, null);
     }
 
     /**
      * Force-sets a size on a target player, bypassing size restrictions.
      */
-    @Subcommand("admin set -f|a set -f")
+    @Subcommand("admin set -f")
     @CommandPermission("aliien.resize.admin.set")
     @CommandCompletion("resize_ids")
     public void forceSizeForce(Player sender, Player target, String sizeId) {
@@ -75,19 +75,19 @@ public class AdminCommands extends BaseCommand {
 
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.getName()).replace("size_id", sizeId));
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeId));
-            Settings.SUCCESS_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(sender);
         }, null);
     }
 
     /**
      * Sets a player size back to default (1.0)
      */
-    @Subcommand("admin clear|a clear")
+    @Subcommand("admin clear")
     @CommandPermission("aliien.resize.admin.clear")
     public void clearSize(Player sender, Player target) {
         if (!plugin.getResizeUtils().hasEnoughSpace(target, 1.0)) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.getName()));
-            Settings.ERROR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(sender);
             return;
         }
 
@@ -97,14 +97,15 @@ public class AdminCommands extends BaseCommand {
 
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.getName()));
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER);
-            Settings.SUCCESS_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(target);
             }, null);
     }
 
     /**
      * Sets a player size back to default (1.0), bypassing size restrictions.
      */
-    @Subcommand("admin clear -f|a clear -f")
+    @Subcommand("admin clear -f")
     @CommandPermission("aliien.resize.admin.clear")
     public void clearSizeForce(Player sender, Player target) {
         target.getScheduler().run(plugin, scheduledTask -> {
@@ -113,7 +114,8 @@ public class AdminCommands extends BaseCommand {
 
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.getName()));
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER);
-            Settings.SUCCESS_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(target);
         }, null);
     }
 }

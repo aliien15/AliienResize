@@ -1,6 +1,8 @@
 package com.aliiensmp.aliienResize;
 
+import co.aikar.commands.MessageKeys;
 import co.aikar.commands.PaperCommandManager;
+import com.aliiensmp.aliienResize.Commands.AdminCommands;
 import com.aliiensmp.aliienResize.Config.Confirmation;
 import com.aliiensmp.aliienResize.Config.Messages;
 import com.aliiensmp.aliienResize.Config.Records.SizeNode;
@@ -24,6 +26,9 @@ import revxrsal.zapper.classloader.URLClassLoaderWrapper;
 import revxrsal.zapper.relocation.Relocation;
 import revxrsal.zapper.repository.Repository;
 import com.aliiensmp.aliienResize.Commands.PlayerCommands;
+
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
@@ -95,8 +100,12 @@ public final class AliienResize extends JavaPlugin {
 
         setupCommands();
 
-        this.resizeUtils = new ResizeUtils();
+        resizeUtils = new ResizeUtils();
         vaultExpansion = new VaultExpansion(this);
+
+        currencyManager = new CurrencyManager(this);
+        currencyManager.loadCurrencies();
+
         setupUpdateChecker();
         setupPapiHook();
         setupBstats();
@@ -118,12 +127,26 @@ public final class AliienResize extends JavaPlugin {
     private void setupCommands() {
         PaperCommandManager commandManager = new co.aikar.commands.PaperCommandManager(this);
 
+        // Prefix
+        commandManager.getLocales().addMessage(
+                Locale.ENGLISH,
+                MessageKeys.ERROR_PREFIX,
+                Messages.PREFIX
+        );
+
+        // No perms msg
+        commandManager.getLocales().addMessage(
+                Locale.ENGLISH,
+                MessageKeys.PERMISSION_DENIED,
+                Messages.NO_PERM
+        );
+
         // Tab completions
         commandManager.getCommandCompletions().registerCompletion("resize_ids", c -> Sizes.SIZES_BY_ID.keySet());
 
         commandManager.getCommandCompletions().registerCompletion("accessible_resize_ids", c -> {
             Player player = c.getPlayer();
-            if (player == null) return java.util.List.of(); // Prevent console errors
+            if (player == null) return List.of(); // Prevent console errors
 
             return Sizes.SIZES_BY_ID.values().stream()
                     .filter(node -> player.hasPermission(node.permission()))
@@ -133,6 +156,7 @@ public final class AliienResize extends JavaPlugin {
         });
 
         commandManager.registerCommand(new PlayerCommands(this));
+        commandManager.registerCommand(new AdminCommands(this));
     }
 
     private void setupBstats() {
@@ -155,9 +179,6 @@ public final class AliienResize extends JavaPlugin {
             settings = new Settings();
             ConfigManager.bindConfig(settingsFile, settings);
             settings.loadDynamicData(settingsFile);
-
-            currencyManager = new CurrencyManager(this);
-            currencyManager.loadCurrencies();
 
             confirmationMenuFile = ConfigManager.loadConfig(this, "confirmation-menu.yml");
             confirmationMenu = new Confirmation(this);
@@ -197,6 +218,8 @@ public final class AliienResize extends JavaPlugin {
     }
 
     public void reloadConfigurations(Player sender) {
+        currencyManager.loadCurrencies();
+
         CompletableFuture.runAsync(() -> {
             boolean success = loadConfigurations();
 

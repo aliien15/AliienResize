@@ -147,7 +147,7 @@ public class CurrencyManager {
         }
 
         registerCurrency(identifier, provider);
-        plugin.getLogger().info("Successfully hooked into " + successDisplayName + "!");
+        plugin.getLogger().info("Successfully registered " + successDisplayName + " as a valid currency!");
     }
 
     private void registerNamedCurrencies(
@@ -185,7 +185,7 @@ public class CurrencyManager {
                 registerCurrencyAlias(legacyIdentifierPrefix + configuredCurrency, provider);
             }
 
-            plugin.getLogger().info("Successfully hooked into " + serviceName + " currency: " + configuredCurrency);
+            plugin.getLogger().info("Successfully registered " + serviceName + " as a valid currency: " + configuredCurrency);
         }
     }
 
@@ -213,7 +213,7 @@ public class CurrencyManager {
             }
 
             registerCurrency("CUSTOM_" + customId, provider);
-            plugin.getLogger().info("Successfully hooked into Custom Currency: " + customId);
+            plugin.getLogger().info("Successfully registered valid Custom Currency: " + customId);
         });
     }
 

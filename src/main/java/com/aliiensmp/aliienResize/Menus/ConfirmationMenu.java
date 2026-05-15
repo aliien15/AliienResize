@@ -19,45 +19,39 @@ public class ConfirmationMenu {
         // Set the display item
         Confirmation.CONFIRMATION_MENU_DISPLAY_SLOTS.forEach(slot -> gui.setItem(slot, ClickableItem.empty(displayItem)));
 
-        // Format the price for the lore
+        // Format the price for the lore price placeholder
         double price = sizeNode.price().price();
         String formattedPrice = (Math.rint(price) == price) ? String.valueOf((long) price) : String.valueOf(price);
 
-        // Confirm buttons
-        Confirmation.ButtonData confirmData = Confirmation.CONFIRMATION_MENU_CONFIRM_BUTTON;
-        List<String> confirmLore = confirmData.lore().stream()
-                .map(line -> line.replace("%price%", formattedPrice))
-                .toList();
+        Confirmation.CONFIRMATION_MENU_ITEMS.forEach(buttonData -> {
 
-        ItemStack confirmItem = new ItemBuilder(confirmData.material())
-                .name(confirmData.name())
-                .stringLore(confirmLore)
-                .customModelData(confirmData.modelData())
-                .addFlags(confirmData.flags())
-                .build();
+            // Parse the %price% placeholder
+            List<String> resolvedLore = buttonData.lore().stream()
+                    .map(line -> line.replace("%price%", formattedPrice))
+                    .toList();
 
-        confirmData.slots().forEach(slot ->
-                gui.setItem(slot, ClickableItem.of(confirmItem, event -> {
+            ItemStack item = new ItemBuilder(buttonData.material())
+                    .name(buttonData.name())
+                    .stringLore(resolvedLore)
+                    .customModelData(buttonData.modelData())
+                    .addFlags(buttonData.flags())
+                    .build();
+
+            ClickableItem clickableItem = switch (buttonData.action()) {
+                case CONFIRM -> ClickableItem.of(item, event -> {
                     player.closeInventory();
                     onConfirm.run();
-                }))
-        );
-
-        // Cancel buttons
-        Confirmation.ButtonData cancelData = Confirmation.CONFIRMATION_MENU_CANCEL_BUTTON;
-        ItemStack cancelItem = new ItemBuilder(cancelData.material())
-                .name(cancelData.name())
-                .stringLore(cancelData.lore())
-                .customModelData(cancelData.modelData())
-                .addFlags(cancelData.flags())
-                .build();
-
-        cancelData.slots().forEach(slot ->
-                gui.setItem(slot, ClickableItem.of(cancelItem, event -> {
-                    Settings.CLICK_SOUND.play(player);
+                });
+                case CANCEL -> ClickableItem.of(item, event -> {
+                    if (Settings.SOUNDS_ENABLED) Settings.CLICK_SOUND.play(player);
                     onCancel.run();
-                }))
-        );
+                });
+                case NONE -> ClickableItem.empty(item);
+            };
+
+            // Set the item in all slots
+            buttonData.slots().forEach(slot -> gui.setItem(slot, clickableItem));
+        });
 
         gui.open(player, 1);
     }

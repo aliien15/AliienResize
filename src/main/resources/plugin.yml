@@ -7,15 +7,9 @@ softdepend: [Vault, PlaceholderAPI, PlayerPoints, UltraEconomy, CoinsEngine, Exc
 commands:
   resize:
     description: Main command for AliienResize.
-    aliases: [resize, size]
+    aliases: [resize]
 
 permissions:
-  aliien.*:
-    description: Grants access to EVERY Aliien plugin permission.
-    default: op
-    children:
-      aliien.resize.*: true
-
   aliien.resize.*:
     description: Grants access to all AliienResize player and admin permissions.
     default: op

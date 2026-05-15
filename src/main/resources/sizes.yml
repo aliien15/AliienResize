@@ -14,40 +14,92 @@ defaults:
     - "<gray>Requires: <white>%permission%</white></gray>"
 
 sizes:
+  # ================= PAGE 1 =================
+  micro:
+    scale: 0.25
+    permission: "aliien.resize.micro"
+    gui:
+      material: BLUE_DYE
+      slot: 20
+      page: 1
+      name: "<dark_blue><bold>Micro Size</bold> <dark_gray>(0.25x)"
+      lore: []
+      lore-without-perm: []
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: false
+      currency: "VAULT"
+      amount: 0.0
+
   tiny:
     scale: 0.5
     permission: "aliien.resize.tiny"
     gui:
       material: LIGHT_BLUE_DYE
-      slot: 12
+      slot: 21
       page: 1
       name: "<aqua><bold>Tiny Size</bold> <dark_gray>(0.5x)"
-      lore:
-        - "<gray>Click to shrink yourself down</gray>"
-        - "<gray>to half your normal size!</gray>"
-      lore-without-perm: [] # Empty lists will automatically use the defaults from above
+      lore: []
+      lore-without-perm: []
       model-data: 0
-      item-flags:
-        - HIDE_ATTRIBUTES
+      item-flags: []
     price:
       enabled: false
       currency: "VAULT"
       amount: 0.0
+
+  small:
+    scale: 0.8
+    permission: "aliien.resize.small"
+    gui:
+      material: LIME_DYE
+      slot: 22
+      page: 1
+      name: "<green><bold>Small Size</bold> <dark_gray>(0.8x)"
+      lore: []
+      lore-without-perm: []
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: false
+      currency: "VAULT"
+      amount: 0.0
+
+  large:
+    scale: 1.5
+    permission: "aliien.resize.large"
+    gui:
+      material: ORANGE_DYE
+      slot: 23
+      page: 1
+      name: "<gold><bold>Large Size</bold> <dark_gray>(1.5x)"
+      lore: []
+      lore-without-perm:
+        - "<gray>This size is currently locked!</gray>"
+        - ""
+        - "<white>Price: <gold>%price%$</gold></white>"
+        - "<green>Click to purchase this size!</green>"
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: true
+      currency: "VAULT"
+      amount: 2500.0
 
   huge:
     scale: 2.0
     permission: "aliien.resize.huge"
     gui:
       material: RED_DYE
-      slot: 14
+      slot: 24
       page: 1
       name: "<red><bold>Huge Size</bold> <dark_gray>(2.0x)"
       lore: []
-      # We put the price placeholder here so they see the cost while it is locked!
       lore-without-perm:
         - "<gray>This size is currently locked!</gray>"
         - ""
-        - "<white>Price: <gold>%price%</gold></white>"
+        - "<white>Price: <gold>%price%$</gold></white>"
         - "<green>Click to purchase this size!</green>"
       model-data: 0
       item-flags: []
@@ -55,6 +107,49 @@ sizes:
       enabled: true
       currency: "VAULT"
       amount: 5000.0
+
+  # ================= PAGE 2 =================
+  giant:
+    scale: 3.0
+    permission: "aliien.resize.giant"
+    gui:
+      material: MAGENTA_DYE
+      slot: 21
+      page: 2
+      name: "<light_purple><bold>Giant Size</bold> <dark_gray>(3.0x)"
+      lore: []
+      lore-without-perm:
+        - "<gray>This size is currently locked!</gray>"
+        - ""
+        - "<white>Price: <gold>%price%$</gold></white>"
+        - "<green>Click to purchase this size!</green>"
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: true
+      currency: "VAULT"
+      amount: 10000.0
+
+  colossal:
+    scale: 5.0
+    permission: "aliien.resize.colossal"
+    gui:
+      material: PURPLE_DYE
+      slot: 23
+      page: 2
+      name: "<dark_purple><bold>Colossal Size</bold> <dark_gray>(5.0x)"
+      lore: []
+      lore-without-perm:
+        - "<gray>This size is currently locked!</gray>"
+        - ""
+        - "<white>Price: <gold>%price%$</gold></white>"
+        - "<green>Click to purchase this size!</green>"
+      model-data: 0
+      item-flags: []
+    price:
+      enabled: true
+      currency: "VAULT"
+      amount: 25000.0
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
 config-version: 1

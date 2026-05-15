@@ -63,16 +63,16 @@ public class Settings {
     public static boolean SOUNDS_ENABLED = true;
 
     @Key("sounds.click")
-    public static String RAW_SOUND_CLICK = "UI_BUTTON_CLICK:1.0:1.0";
+    private static String RAW_SOUND_CLICK = "UI_BUTTON_CLICK:1.0:1.0";
 
     @Key("sounds.success")
-    public static String RAW_SOUND_SUCCESS = "ENTITY_PLAYER_LEVELUP:1.0:1.0";
+    private static String RAW_SOUND_SUCCESS = "ENTITY_PLAYER_LEVELUP:1.0:1.0";
 
     @Key("sounds.error")
-    public static String RAW_SOUND_ERROR = "ENTITY_VILLAGER_NO:1.0:1.0";
+    private static String RAW_SOUND_ERROR = "ENTITY_VILLAGER_NO:1.0:1.0";
 
     @Key("sounds.clear")
-    public static String RAW_SOUND_CLEAR = "ENTITY_EXPERIENCE_ORB_PICKUP:1.0:0.5";
+    private static String RAW_SOUND_CLEAR = "ENTITY_EXPERIENCE_ORB_PICKUP:1.0:0.5";
 
     @Key("purchase-logging.enabled")
     public static boolean LOGGING_ENABLED = true;
@@ -83,7 +83,6 @@ public class Settings {
     @Key("confirmation-menu.enabled")
     public static boolean CONFIRMATION_MENU_ENABLED = true;
 
-    @Key("blacklisted-worlds")
     public static HashSet<String> BLACKLISTED_WORLDS = new HashSet<>();
 
     public static CustomSound CLICK_SOUND = SoundUtils.parse(RAW_SOUND_CLICK);
@@ -95,6 +94,10 @@ public class Settings {
 
     public void loadDynamicData(YamlDocument config) {
         CUSTOM_CURRENCIES.clear();
+        BLACKLISTED_WORLDS.clear();
+
+        BLACKLISTED_WORLDS.addAll(config.getStringList("blacklisted-worlds"));
+
         Optional.ofNullable(config.getSection("hooks.custom-economy.currencies")).ifPresent(section -> {
             section.getRoutesAsStrings(false).forEach(currencyId -> {
                 String balancePlaceholder = section.getString(currencyId + ".balance-placeholder", "");
