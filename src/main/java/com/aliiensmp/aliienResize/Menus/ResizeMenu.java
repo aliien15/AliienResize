@@ -125,7 +125,7 @@ public class ResizeMenu {
             if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
 
             Bukkit.getOnlinePlayers().stream()
-                    .filter(admin -> hasPermission(admin, "aliien.resize.admin"))
+                    .filter(admin -> admin.hasPermission("aliien.resize.admin"))
                     .forEach(admin -> {
                         MessageUtils.send(admin, Messages.PREFIX, "<red>Vault permissions provider is currently not setup properly, which just prevented a player from purchasing a size!");
                         if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(admin);

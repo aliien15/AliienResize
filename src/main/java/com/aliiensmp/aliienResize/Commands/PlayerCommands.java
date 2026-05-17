@@ -30,6 +30,12 @@ public class PlayerCommands extends BaseCommand {
     @Subcommand("menu")
     @CommandPermission("aliien.resize.menu")
     public void openMenu(Player player) {
+        if (!player.hasPermission("aliien.resize.bypass.worldblacklist") && Settings.BLACKLISTED_WORLDS.contains(player.getWorld().getName())) {
+            MessageUtils.send(player, Messages.PREFIX, Messages.IN_BLACKLISTED_WORLD);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
+            return;
+        }
+
         new ResizeMenu(plugin).openMenu(player, 1);
         if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(player);
     }
@@ -45,6 +51,12 @@ public class PlayerCommands extends BaseCommand {
 
         if (!player.hasPermission(sizeNode.permission())) {
             MessageUtils.send(player, Messages.PREFIX, Messages.NO_PERM);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
+            return;
+        }
+
+        if (!player.hasPermission("aliien.resize.bypass.worldblacklist") && Settings.BLACKLISTED_WORLDS.contains(player.getWorld().getName())) {
+            MessageUtils.send(player, Messages.PREFIX, Messages.IN_BLACKLISTED_WORLD);
             if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             return;
         }

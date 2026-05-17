@@ -7,6 +7,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
+import java.util.Objects;
+
 public class ResizeUtils {
 
     /**
@@ -18,7 +20,9 @@ public class ResizeUtils {
      * @requires {@code player != null && newScale > 0}
      */
     public boolean hasEnoughSpace (Player player, double newScale) {
-        if (player.getAttribute(Attribute.GENERIC_SCALE).getValue() >= newScale) return true;
+        if (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_SCALE)).getValue() >= newScale
+                || player.hasPermission("aliien.resize.bypass.collisioncheck"))
+            return true;
 
         double halfWidth = (0.6 * newScale) / 2.0;
         double height = 1.8 * newScale;

@@ -18,8 +18,6 @@ import java.util.*;
 
 public class Sizes {
 
-    private final AliienResize plugin;
-
     // GUI settings cache
     public static String MENU_TITLE = "<dark_gray>Select your Size</dark_gray>";
     public static int MENU_ROWS = 6;
@@ -38,14 +36,10 @@ public class Sizes {
     private record ParsedSizeEntry(SizeNode node, CachedSizeItem cachedItem, int page) {}
     private record RawActionItem(MenuAction action, Material material, String name, List<Integer> slots, List<String> lore, int modelData, List<ItemFlag> flags) {}
 
-    public Sizes(AliienResize plugin) {
-        this.plugin = plugin;
-    }
-
     /**
      * Rebuilds the runtime cache using functional streams, reading from both configs.
      */
-    public void loadFromConfigs(YamlDocument sizesConfig, YamlDocument mainMenuConfig) {
+    public static void loadFromConfigs(YamlDocument sizesConfig, YamlDocument mainMenuConfig, AliienResize plugin) {
         SIZES_BY_ID.clear();
         SIZE_ITEMS_BY_PAGE.clear();
         ACTION_ITEMS_BY_PAGE.clear();
@@ -53,7 +47,7 @@ public class Sizes {
 
         MENU_TITLE = mainMenuConfig.getString("menu-settings.title", "<dark_gray>Select your Size</dark_gray>");
         MENU_ROWS = mainMenuConfig.getInt("menu-settings.rows", 6);
-        MENU_LOCKED_MATERIAL = parseMaterial(mainMenuConfig.getString("menu-settings.locked-material", "BARRIER"), Material.BARRIER, "locked-material");
+        MENU_LOCKED_MATERIAL = parseMaterial(mainMenuConfig.getString("menu-settings.locked-material", "BARRIER"), Material.BARRIER, "locked-material", plugin);
 
         MENU_DEFAULT_LORE = Optional.ofNullable(sizesConfig.getStringList("defaults.lore")).orElse(List.of());
         MENU_DEFAULT_LORE_NO_PERM = Optional.ofNullable(sizesConfig.getStringList("defaults.lore-without-perm")).orElse(List.of());
@@ -63,17 +57,17 @@ public class Sizes {
         // Parse size nodes
         Optional.ofNullable(sizesConfig.getSection("sizes")).ifPresentOrElse(
                 section -> section.getRoutesAsStrings(false).stream()
-                        .map(rawKey -> parseSizeEntry(section.getSection(rawKey), rawKey, maxSlots))
+                        .map(rawKey -> parseSizeEntry(section.getSection(rawKey), rawKey, maxSlots, plugin))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .forEach(this::cacheSizeEntry),
+                        .forEach(Sizes::cacheSizeEntry),
                 () -> plugin.getLogger().warning("No 'sizes' section found in sizes.yml.")
         );
 
         // Parse action items
         Optional.ofNullable(mainMenuConfig.getSection("items")).ifPresentOrElse(
                 section -> section.getRoutesAsStrings(false).stream()
-                        .map(rawKey -> parseRawActionItem(section.getSection(rawKey), rawKey))
+                        .map(rawKey -> parseRawActionItem(section.getSection(rawKey), rawKey, plugin))
                         .forEach(rawItem -> expandActionItem(rawItem, maxSlots)),
                 () -> plugin.getLogger().info("No action items found in main-menu.yml.")
         );
@@ -85,7 +79,7 @@ public class Sizes {
         plugin.getLogger().info("Loaded " + SIZES_BY_ID.size() + " sizes across " + MENU_MAX_PAGE + " page(s).");
     }
 
-    private Optional<ParsedSizeEntry> parseSizeEntry(Section section, String rawKey, int maxSlots) {
+    private static Optional<ParsedSizeEntry> parseSizeEntry(Section section, String rawKey, int maxSlots, AliienResize plugin) {
         String id = rawKey.toLowerCase(Locale.ROOT);
 
         int slot = section.getInt("gui.slot", 0);
@@ -106,7 +100,7 @@ public class Sizes {
         List<String> rawNoPermLore = specificNoPermLore.isEmpty() ? MENU_DEFAULT_LORE_NO_PERM : specificNoPermLore;
 
         List<ItemFlag> itemFlags = parseItemFlags(section.getStringList("gui.item-flags"), id);
-        Material material = parseMaterial(section.getString("gui.material", "STONE"), Material.STONE, id);
+        Material material = parseMaterial(section.getString("gui.material", "STONE"), Material.STONE, id, plugin);
         String name = section.getString("gui.name", "<green>" + rawKey);
         int modelData = section.getInt("gui.model-data", 0);
 
@@ -135,7 +129,7 @@ public class Sizes {
         return Optional.of(new ParsedSizeEntry(sizeNode, cachedItem, page));
     }
 
-    private RawActionItem parseRawActionItem(Section section, String rawKey) {
+    private static RawActionItem parseRawActionItem(Section section, String rawKey, AliienResize plugin) {
         MenuAction parsedAction;
         try {
             parsedAction = MenuAction.valueOf(section.getString("action", "NONE").toUpperCase(Locale.ROOT));
@@ -146,7 +140,7 @@ public class Sizes {
 
         return new RawActionItem(
                 parsedAction,
-                parseMaterial(section.getString("material", "STONE"), Material.STONE, rawKey),
+                parseMaterial(section.getString("material", "STONE"), Material.STONE, rawKey, plugin),
                 section.getString("name", " "),
                 section.getIntList("slots"),
                 Optional.ofNullable(section.getStringList("lore")).orElse(List.of()),
@@ -155,7 +149,7 @@ public class Sizes {
         );
     }
 
-    private void expandActionItem(RawActionItem rawItem, int maxSlots) {
+    private static void expandActionItem(RawActionItem rawItem, int maxSlots) {
         ItemFlag[] flagsArray = rawItem.flags().toArray(new ItemFlag[0]);
 
         for (int page = 1; page <= MENU_MAX_PAGE; page++) {
@@ -178,13 +172,13 @@ public class Sizes {
         }
     }
 
-    private void cacheSizeEntry(ParsedSizeEntry entry) {
+    private static void cacheSizeEntry(ParsedSizeEntry entry) {
         SIZES_BY_ID.put(entry.node().id(), entry.node());
         SIZE_ITEMS_BY_PAGE.computeIfAbsent(entry.page(), k -> new ArrayList<>()).add(entry.cachedItem());
         MENU_MAX_PAGE = Math.max(MENU_MAX_PAGE, entry.page());
     }
 
-    private boolean shouldDisplayOnPage(MenuAction action, int page) {
+    private static boolean shouldDisplayOnPage(MenuAction action, int page) {
         return switch (action) {
             case NEXT_PAGE -> page < MENU_MAX_PAGE;
             case PREVIOUS_PAGE -> page > 1;
@@ -192,7 +186,7 @@ public class Sizes {
         };
     }
 
-    private int resolveTargetPage(MenuAction action, int page) {
+    private static int resolveTargetPage(MenuAction action, int page) {
         return switch (action) {
             case NEXT_PAGE -> page + 1;
             case PREVIOUS_PAGE -> page - 1;
@@ -200,7 +194,7 @@ public class Sizes {
         };
     }
 
-    private Material parseMaterial(String name, Material fallback, String id) {
+    private static Material parseMaterial(String name, Material fallback, String id, AliienResize plugin) {
         return Optional.ofNullable(name)
                 .filter(n -> !n.isBlank())
                 .map(n -> Material.matchMaterial(n.toUpperCase(Locale.ROOT)))
@@ -210,7 +204,7 @@ public class Sizes {
                 });
     }
 
-    private List<ItemFlag> parseItemFlags(List<String> flags, String id) {
+    private static List<ItemFlag> parseItemFlags(List<String> flags, String id) {
         return Optional.ofNullable(flags).orElse(List.of()).stream()
                 .map(flag -> {
                     try {
@@ -223,13 +217,13 @@ public class Sizes {
                 .toList();
     }
 
-    private List<String> replacePlaceholders(List<String> list, String p1, String v1, String p2, String v2, String p3, String v3) {
+    private static List<String> replacePlaceholders(List<String> list, String p1, String v1, String p2, String v2, String p3, String v3) {
         return list.stream()
                 .map(line -> line.replace(p1, v1).replace(p2, v2).replace(p3, v3))
                 .toList();
     }
 
-    private ItemStack buildItem(Material material, String name, List<String> lore, int modelData, ItemFlag[] flags, boolean glow) {
+    private static ItemStack buildItem(Material material, String name, List<String> lore, int modelData, ItemFlag[] flags, boolean glow) {
         ItemBuilder builder = new ItemBuilder(material)
                 .name(name)
                 .stringLore(lore)

@@ -92,7 +92,7 @@ public class Settings {
 
     public static final Map<String, CustomCurrency> CUSTOM_CURRENCIES = new HashMap<>();
 
-    public void loadDynamicData(YamlDocument config) {
+    public static void loadDynamicData(YamlDocument config) {
         CUSTOM_CURRENCIES.clear();
         BLACKLISTED_WORLDS.clear();
 

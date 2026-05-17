@@ -54,4 +54,10 @@ public class Messages {
 
     @Key("force-set.not-enough-space")
     public static String FORCE_SET_FAIL = "&cNot enough space for %player% to resize!";
+
+    @Key("blacklisted-world.world-change")
+    public static String CHANGE_TO_BLACKLISTED_WORLD = "&cYou have entered a blacklisted world, so your size has bene set back to 0";
+
+    @Key("blacklisted-world.in-blacklisted-world")
+    public static String IN_BLACKLISTED_WORLD = "&cYou cannot resize yourself here!";
 }

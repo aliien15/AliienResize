@@ -17,6 +17,7 @@ permissions:
       aliien.resize.use: true
       aliien.resize.set: true
       aliien.resize.clear: true
+      aliien.resize.admin.*: true
 
   aliien.resize.admin.*:
     description: Grants access to all Aliienresize admin commands.
@@ -38,6 +39,21 @@ permissions:
 
   aliien.resize.clear:
     description: Allows the player to clear their active size.
+    default: true
+
+  aliien.resize.bypass.*:
+    description: Allows the player to bypass all restrictions.
+    default: op
+    children:
+      aliien.resize.bypass.worldblacklist: true
+      aliien.resize.bypass.collisioncheck: true
+
+  aliien.resize.bypass.worldblacklist:
+    description: Allows the player to bypass world restrictions.
+    default: true
+
+  aliien.resize.bypass.collisioncheck:
+    description: Allows the player to bypass collision check restrictions.
     default: true
 
   # Individual admin perms

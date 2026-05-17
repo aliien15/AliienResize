@@ -22,6 +22,9 @@ messages:
     default-player: "&aYour size was cleared by an admin!"
     default-admin: "&aCleared %player%'s size!"
     not-enough-space: "&cNot enough space for %player% to resize!"
+  blacklisted-world:
+    world-change: "&cYou have entered a blacklisted world, so your size has bene set back to 0"
+    in-blacklisted-world: "&cYou cannot resize yourself here!"
   updates:
     new-version: "&aA new AliienResize version is now available!"
 

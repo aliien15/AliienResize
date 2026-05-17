@@ -20,6 +20,7 @@ import com.aliiensmp.core.utils.updatechecker.UpdateChecker;
 import com.aliiensmp.core.utils.updatechecker.UpdateNotifyListener;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.zapper.DependencyManager;
 import revxrsal.zapper.classloader.URLClassLoaderWrapper;
@@ -38,24 +39,11 @@ import java.util.logging.Level;
 
 public final class AliienResize extends JavaPlugin {
 
-    // messages.yml
     private YamlDocument messagesFile;
-    private Messages messages;
-
-    // sizes.yml
     private YamlDocument sizesFile;
-    private Sizes sizes;
-
-    // main-menu.yml
     private YamlDocument mainMenuFile;
-
-    // settings.yml
     private YamlDocument settingsFile;
-    private Settings settings;
-
-    // confirmation-menu.yml
     private YamlDocument confirmationMenuFile;
-    private Confirmation confirmationMenu;
 
     private ResizeUtils resizeUtils;
     private CurrencyManager currencyManager;
@@ -163,27 +151,28 @@ public final class AliienResize extends JavaPlugin {
         Metrics metrics = new Metrics(this, 31229);
     }
 
+    /**
+     * Loads every managed YAML file used by the plugin.
+     *
+     * @return {@code true} when all configuration files are available and loaded successfully
+     */
     private boolean loadConfigurations() {
         try {
             messagesFile = ConfigManager.loadConfig(this, "messages.yml");
-            messages = new Messages();
-            ConfigManager.bindConfig(messagesFile, messages);
+            ConfigManager.bindConfig(messagesFile, Messages.class);
 
-            sizesFile = ConfigManager.loadConfig(this, "sizes.yml");
             mainMenuFile = ConfigManager.loadConfig(this, "main-menu.yml");
 
-            sizes = new Sizes(this);
-            sizes.loadFromConfigs(sizesFile, mainMenuFile);
+            sizesFile = ConfigManager.loadConfig(this, "sizes.yml");
+            Sizes.loadFromConfigs(sizesFile, mainMenuFile, this);
 
             settingsFile = ConfigManager.loadConfig(this, "settings.yml");
-            settings = new Settings();
-            ConfigManager.bindConfig(settingsFile, settings);
-            settings.loadDynamicData(settingsFile);
+            ConfigManager.bindConfig(settingsFile, Settings.class);
+            Settings.loadDynamicData(settingsFile);
 
             confirmationMenuFile = ConfigManager.loadConfig(this, "confirmation-menu.yml");
-            confirmationMenu = new Confirmation(this);
-            ConfigManager.bindConfig(confirmationMenuFile, "confirmation-menu.yml");
-            confirmationMenu.loadFromConfig(confirmationMenuFile);
+            ConfigManager.bindConfig(confirmationMenuFile, Confirmation.class);
+            Confirmation.loadFromConfig(confirmationMenuFile, this);
 
             return true;
         } catch (Exception e) {
@@ -217,19 +206,25 @@ public final class AliienResize extends JavaPlugin {
         );
     }
 
-    public void reloadConfigurations(Player sender) {
+    public void reloadConfigurations(CommandSender sender) {
         currencyManager.loadCurrencies();
 
         CompletableFuture.runAsync(() -> {
             boolean success = loadConfigurations();
 
-            sender.getScheduler().run(this, scheduledTask -> {
+            Runnable task = () -> {
                 if (success) {
                     MessageUtils.send(sender, Messages.PREFIX, Messages.RELOAD_SUCCESS);
                 } else {
                     MessageUtils.send(sender, Messages.PREFIX, Messages.RELOAD_FAIL);
                 }
-            }, null);
+            };
+
+            if (sender instanceof Player player) {
+                player.getScheduler().run(this, scheduledTask -> task.run(), null);
+            } else {
+                getServer().getGlobalRegionScheduler().run(this, scheduledTask -> task.run());
+            }
         });
     }
 

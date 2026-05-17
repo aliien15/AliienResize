@@ -18,8 +18,6 @@ import static com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction.NONE;
 
 public class Confirmation {
 
-    private final AliienResize plugin;
-
     @Key("menu-settings.title")
     public static String CONFIRMATION_MENU_TITLE = "<dark_gray>Confirm Purchase?</dark_gray>";
 
@@ -32,11 +30,7 @@ public class Confirmation {
 
     public record ButtonData(ConfirmationMenuAction action, Material material, String name, List<String> lore, List<Integer> slots, int modelData, ItemFlag[] flags) {}
 
-    public Confirmation(AliienResize plugin) {
-        this.plugin = plugin;
-    }
-
-    public void loadFromConfig(YamlDocument config) {
+    public static void loadFromConfig(YamlDocument config, AliienResize plugin) {
 
         CONFIRMATION_MENU_ROWS = Math.max(1, Math.min(config.getInt("menu-settings.rows", 3), 6));
 
@@ -44,12 +38,12 @@ public class Confirmation {
 
         Optional.ofNullable(config.getSection("items")).ifPresent(section -> {
             section.getRoutesAsStrings(false).forEach(key -> {
-                CONFIRMATION_MENU_ITEMS.add(parseButton(section.getSection(key), key));
+                CONFIRMATION_MENU_ITEMS.add(parseButton(section.getSection(key), key, plugin));
             });
         });
     }
 
-    private ButtonData parseButton(Section sec, String key) {
+    private static ButtonData parseButton(Section sec, String key, AliienResize plugin) {
         ConfirmationMenuAction action;
         try {
             action = ConfirmationMenuAction.valueOf(sec.getString("action", "NONE").toUpperCase(Locale.ROOT));
