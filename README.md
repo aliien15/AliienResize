@@ -1,7 +1,7 @@
 <div align="center">
 
 # 📏 AliienResize
-**A premium, high-performance player scaling plugin for Minecraft Servers.**
+**A free, high-performance player scaling plugin for Minecraft Servers.**
 
 [![Paper](https://img.shields.io/badge/Paper-1.21-blue?style=flat-square)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square)](https://adoptium.net/)
