@@ -12,6 +12,7 @@ import com.aliiensmp.core.utils.MessageUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.Optional;
 
 @CommandAlias("resize")
@@ -45,9 +46,19 @@ public class PlayerCommands extends BaseCommand {
      */
     @Subcommand("set")
     @CommandPermission("aliien.resize.set")
-    @CommandCompletion("accessible_resize_ids")
+    @CommandCompletion("@accessible_resize_ids")
     public void resize(Player player, String sizeId) {
-        SizeNode sizeNode = Sizes.SIZES_BY_ID.get(sizeId);
+        SizeNode sizeNode = Sizes.SIZES_BY_ID.entrySet().stream()
+                .filter(entry -> entry.getKey().equalsIgnoreCase(sizeId))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
+        if (sizeNode == null) {
+            MessageUtils.send(player, Messages.PREFIX, Messages.NULL_ID);
+            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
+            return;
+        }
 
         if (!player.hasPermission(sizeNode.permission())) {
             MessageUtils.send(player, Messages.PREFIX, Messages.NO_PERM);

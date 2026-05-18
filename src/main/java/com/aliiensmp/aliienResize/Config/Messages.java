@@ -16,6 +16,9 @@ public class Messages {
     @Key("messages.resize.fail")
     public static String RESIZE_FAIL = "&cThere is not enough space around you to resize!";
 
+    @Key("messages.null-id")
+    public static String NULL_ID = "&cThat size ID does not exist!";
+
     @Key("messages.reload.reloading")
     public static String RELOADING = "&eReloading configurations...";
 
@@ -56,7 +59,7 @@ public class Messages {
     public static String FORCE_SET_FAIL = "&cNot enough space for %player% to resize!";
 
     @Key("blacklisted-world.world-change")
-    public static String CHANGE_TO_BLACKLISTED_WORLD = "&cYou have entered a blacklisted world, so your size has bene set back to 0";
+    public static String CHANGE_TO_BLACKLISTED_WORLD = "&cYou have entered a blacklisted world, so your size has bene set back to 1.0x";
 
     @Key("blacklisted-world.in-blacklisted-world")
     public static String IN_BLACKLISTED_WORLD = "&cYou cannot resize yourself here!";

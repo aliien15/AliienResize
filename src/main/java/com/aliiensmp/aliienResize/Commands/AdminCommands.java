@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Flags;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.Subcommand;
 import com.aliiensmp.aliienResize.AliienResize;
 import com.aliiensmp.aliienResize.Config.Messages;
@@ -12,9 +14,10 @@ import com.aliiensmp.aliienResize.Config.Settings;
 import com.aliiensmp.aliienResize.Config.Sizes;
 import com.aliiensmp.core.utils.MessageUtils;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
+import java.util.Map;
 
 @CommandAlias("resize")
 public class AdminCommands extends BaseCommand {
@@ -25,97 +28,68 @@ public class AdminCommands extends BaseCommand {
         this.plugin = plugin;
     }
 
-    /**
-     * Reloads all configuration files and caches.
-     */
     @Subcommand("admin reload")
     @CommandPermission("aliien.resize.admin.reload")
-    public void reloadConfigs(Player player) {
-        MessageUtils.send(player, Messages.PREFIX, Messages.RELOADING);
-        plugin.reloadConfigurations(player);
+    public void reloadConfigs(CommandSender sender) {
+        MessageUtils.send(sender, Messages.PREFIX, Messages.RELOADING);
+        plugin.reloadConfigurations(sender);
     }
 
-    /**
-     * Force-sets a size on a target player.
-     */
     @Subcommand("admin set")
     @CommandPermission("aliien.resize.admin.set")
-    @CommandCompletion("resize_ids")
-    public void resizePlayer(Player sender, Player target, String sizeId) {
-        SizeNode sizeNode = Sizes.SIZES_BY_ID.get(sizeId);
+    @CommandCompletion("@players @resize_ids -f")
+    public void resizePlayer(CommandSender sender, @Flags("other") Player target, String sizeId, @Optional String flag) {
 
-        if (!plugin.getResizeUtils().hasEnoughSpace(target, sizeNode.scale())) {
+        SizeNode sizeNode = Sizes.SIZES_BY_ID.entrySet().stream()
+                .filter(entry -> entry.getKey().equalsIgnoreCase(sizeId))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
+        boolean force = flag != null && flag.equalsIgnoreCase("-f");
+
+        if (sizeNode == null) {
+            MessageUtils.send(sender, Messages.PREFIX, Messages.NULL_ID);
+            if (Settings.SOUNDS_ENABLED && sender instanceof Player p) Settings.ERROR_SOUND.play(p);
+            return;
+        }
+
+        if (!force && !plugin.getResizeUtils().hasEnoughSpace(target, sizeNode.scale())) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.getName()));
-            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED && sender instanceof Player p) Settings.ERROR_SOUND.play(p);
             return;
         }
 
         target.getScheduler().run(plugin, scheduledTask -> {
-            Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
+            java.util.Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
                     .ifPresent(attribute -> attribute.setBaseValue(sizeNode.scale()));
 
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.getName()).replace("size_id", sizeId));
-            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeId));
-            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(sender);
+            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.getName()).replace("%size_id%", sizeNode.id()));
+            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeNode.id()));
+            if (Settings.SOUNDS_ENABLED && sender instanceof Player p) Settings.SUCCESS_SOUND.play(p);
         }, null);
     }
 
-    /**
-     * Force-sets a size on a target player, bypassing size restrictions.
-     */
-    @Subcommand("admin set -f")
-    @CommandPermission("aliien.resize.admin.set")
-    @CommandCompletion("resize_ids")
-    public void forceSizeForce(Player sender, Player target, String sizeId) {
-        SizeNode sizeNode = Sizes.SIZES_BY_ID.get(sizeId);
-
-        target.getScheduler().run(plugin, scheduledTask -> {
-            Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
-                    .ifPresent(attribute -> attribute.setBaseValue(sizeNode.scale()));
-
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.getName()).replace("size_id", sizeId));
-            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeId));
-            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(sender);
-        }, null);
-    }
-
-    /**
-     * Sets a player size back to default (1.0)
-     */
     @Subcommand("admin clear")
     @CommandPermission("aliien.resize.admin.clear")
-    public void clearSize(Player sender, Player target) {
-        if (!plugin.getResizeUtils().hasEnoughSpace(target, 1.0)) {
+    @CommandCompletion("@players -f")
+    public void clearSize(CommandSender sender, @Flags("other") Player target, @Optional String flag) {
+        boolean force = flag != null && flag.equalsIgnoreCase("-f");
+
+        if (!force && !plugin.getResizeUtils().hasEnoughSpace(target, 1.0)) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.getName()));
-            if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(sender);
+            if (Settings.SOUNDS_ENABLED && sender instanceof Player p) Settings.ERROR_SOUND.play(p);
             return;
         }
 
         target.getScheduler().run(plugin, scheduledTask -> {
-            Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
+            java.util.Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
                     .ifPresent(attribute -> attribute.setBaseValue(1.0));
 
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.getName()));
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER);
-            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(sender);
-            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(target);
-            }, null);
-    }
-
-    /**
-     * Sets a player size back to default (1.0), bypassing size restrictions.
-     */
-    @Subcommand("admin clear -f")
-    @CommandPermission("aliien.resize.admin.clear")
-    public void clearSizeForce(Player sender, Player target) {
-        target.getScheduler().run(plugin, scheduledTask -> {
-            Optional.ofNullable(target.getAttribute(Attribute.GENERIC_SCALE))
-                    .ifPresent(attribute -> attribute.setBaseValue(1.0));
-
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.getName()));
-            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER);
-            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(sender);
-            if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(target);
+            if (Settings.SOUNDS_ENABLED && sender instanceof Player p) Settings.CLEAR_SOUND.play(p);
+            if (Settings.SOUNDS_ENABLED && target != sender) Settings.CLEAR_SOUND.play(target);
         }, null);
     }
 }

@@ -11,6 +11,7 @@ import com.aliiensmp.aliienResize.Config.Sizes;
 import com.aliiensmp.aliienResize.Economy.CurrencyManager;
 import com.aliiensmp.aliienResize.Hooks.PapiExpansion;
 import com.aliiensmp.aliienResize.Hooks.VaultExpansion;
+import com.aliiensmp.aliienResize.Listeners.WorldListener;
 import com.aliiensmp.aliienResize.Utils.ResizeUtils;
 import com.aliiensmp.core.AliienCore;
 import com.aliiensmp.core.config.ConfigManager;
@@ -87,6 +88,7 @@ public final class AliienResize extends JavaPlugin {
         }
 
         setupCommands();
+        setupListeners();
 
         resizeUtils = new ResizeUtils();
         vaultExpansion = new VaultExpansion(this);
@@ -99,6 +101,10 @@ public final class AliienResize extends JavaPlugin {
         setupBstats();
 
         getLogger().info("AliienResize enabled successfully!");
+    }
+
+    private void setupListeners() {
+        getServer().getPluginManager().registerEvents(new WorldListener(this), this);
     }
 
     @Override

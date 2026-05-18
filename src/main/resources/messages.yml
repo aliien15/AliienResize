@@ -7,6 +7,7 @@ messages:
     success: "&aYou have successfully resized!"
     default: "&aYour size has been set back to default!"
     fail: "&cThere is not enough space around you to resize!"
+    null-id: "&cThat size ID does not exist!"
   reload:
     reloading: "&eReloading configurations..."
     success: "&aAliienResize has been successfully reloaded!"
@@ -23,7 +24,7 @@ messages:
     default-admin: "&aCleared %player%'s size!"
     not-enough-space: "&cNot enough space for %player% to resize!"
   blacklisted-world:
-    world-change: "&cYou have entered a blacklisted world, so your size has bene set back to 0"
+    world-change: "&cYou have entered a blacklisted world, so your size has bene set back to 1.0x"
     in-blacklisted-world: "&cYou cannot resize yourself here!"
   updates:
     new-version: "&aA new AliienResize version is now available!"
