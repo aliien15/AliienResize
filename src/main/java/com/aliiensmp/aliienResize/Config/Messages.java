@@ -16,7 +16,7 @@ public class Messages {
     @Key("messages.resize.fail")
     public static String RESIZE_FAIL = "&cThere is not enough space around you to resize!";
 
-    @Key("messages.null-id")
+    @Key("messages.resize.null-id")
     public static String NULL_ID = "&cThat size ID does not exist!";
 
     @Key("messages.reload.reloading")
@@ -40,27 +40,27 @@ public class Messages {
     @Key("messages.no-permission")
     public static String NO_PERM = "&cYou do not have permission to do this!";
 
-    @Key("updates.new-version")
+    @Key("messages.updates.new-version")
     public static String NEW_VERSION = "<green>A new AliienResize version is now available!";
 
-    @Key("force-set.player")
+    @Key("messages.force-set.player")
     public static String FORCE_SET_PLAYER = "&aYour size was updated by an admin!";
 
-    @Key("force-set.admin")
+    @Key("messages.force-set.admin")
     public static String FORCE_SET_ADMIN = "&aSet %player%'s size to %size_id%!";
 
-    @Key("force-set.default-player")
+    @Key("messages.force-set.default-player")
     public static String FORCE_CLEAR_PLAYER = "&aYour size was cleared by an admin!";
 
-    @Key("force-set.default-admin")
+    @Key("messages.force-set.default-admin")
     public static String FORCE_CLEAR_ADMIN = "&aCleared %player%'s size!";
 
-    @Key("force-set.not-enough-space")
+    @Key("messages.force-set.not-enough-space")
     public static String FORCE_SET_FAIL = "&cNot enough space for %player% to resize!";
 
-    @Key("blacklisted-world.world-change")
+    @Key("messages.blacklisted-world.world-change")
     public static String CHANGE_TO_BLACKLISTED_WORLD = "&cYou have entered a blacklisted world, so your size has bene set back to 1.0x";
 
-    @Key("blacklisted-world.in-blacklisted-world")
+    @Key("messages.blacklisted-world.in-blacklisted-world")
     public static String IN_BLACKLISTED_WORLD = "&cYou cannot resize yourself here!";
 }
