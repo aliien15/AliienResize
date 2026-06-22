@@ -7,6 +7,17 @@ import org.bukkit.entity.Player;
 
 public class RoyaleEco implements CurrencyProvider {
 
+    private final String suffix;
+
+    /**
+     * Creates the RoyaleEconomy adapter.
+     *
+     * @param suffix suffix displayed beside prices
+     */
+    public RoyaleEco(String suffix) {
+        this.suffix = suffix;
+    }
+
     @Override
     public boolean isValid() {
         return Bukkit.getPluginManager().getPlugin("RoyaleEconomy") != null;
@@ -24,5 +35,10 @@ public class RoyaleEco implements CurrencyProvider {
 
         RoyaleEconomy.apiHandler.balance.removeBalance(player.getUniqueId().toString(), amount);
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

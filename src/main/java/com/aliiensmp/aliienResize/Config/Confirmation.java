@@ -3,8 +3,8 @@ package com.aliiensmp.aliienResize.Config;
 import com.aliiensmp.aliienResize.AliienResize;
 import com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction;
 import com.aliiensmp.core.config.Key;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import com.aliiensmp.core.lib.boostedyaml.YamlDocument;
+import com.aliiensmp.core.lib.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 

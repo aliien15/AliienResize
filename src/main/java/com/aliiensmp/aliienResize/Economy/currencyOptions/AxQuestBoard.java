@@ -1,21 +1,20 @@
 package com.aliiensmp.aliienResize.Economy.currencyOptions;
 
 import com.aliiensmp.aliienResize.Economy.CurrencyProvider;
-import org.black_ixx.playerpoints.PlayerPoints;
-import org.black_ixx.playerpoints.PlayerPointsAPI;
+import com.artillexstudios.axquestboard.api.AxQuestBoardAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class PlayerPoint implements CurrencyProvider {
+public class AxQuestBoard implements CurrencyProvider {
 
-    private final PlayerPointsAPI playerPointsAPI;
     private final String suffix;
 
     /**
-     * Creates the PlayerPoints adapter.
+     * Creates the AxQuestBoard adapter.
+     *
+     * @param suffix suffix displayed beside prices
      */
-    public PlayerPoint(String suffix) {
-        PlayerPoints instance = PlayerPoints.getInstance();
-        this.playerPointsAPI = instance != null ? instance.getAPI() : null;
+    public AxQuestBoard(String suffix) {
         this.suffix = suffix;
     }
 
@@ -31,19 +30,24 @@ public class PlayerPoint implements CurrencyProvider {
 
     @Override
     public boolean isValid() {
-        return playerPointsAPI != null;
+        return Bukkit.getPluginManager().getPlugin("AxQuestBoard") != null;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean hasBalance(Player player, double amount) {
         if (!isValid()) return false;
-        return playerPointsAPI.look(player.getUniqueId()) >= getRequiredPoints(amount);
+
+        int playerBalance = AxQuestBoardAPI.getQuestPoints(player.getUniqueId()).join();
+        return playerBalance >= getRequiredPoints(amount);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean withdraw(Player player, double amount) {
         if (!hasBalance(player, amount)) return false;
-        return playerPointsAPI.take(player.getUniqueId(), getRequiredPoints(amount));
+
+        return AxQuestBoardAPI.takeQuestPoints(player.getUniqueId(), getRequiredPoints(amount)).join();
     }
 
     @Override

@@ -6,7 +6,7 @@
 
     <groupId>com.aliiensmp</groupId>
     <artifactId>AliienResize</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>AliienResize</name>
@@ -49,9 +49,11 @@
                                 </filter>
                                 <filter>
                                     <artifact>com.aliiensmp:AliienCore</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
                                     <excludes>
                                         <exclude>com/aliiensmp/core/lib/hikari/**</exclude>
-
                                         <exclude>com/mysql/**</exclude>
                                         <exclude>org/sqlite/**</exclude>
                                         <exclude>dev/dejvokep/boostedyaml/**</exclude>
@@ -61,15 +63,15 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.aliiensmp.core</pattern>
-                                    <shadedPattern>com.aliiensmp.aliienResize.core</shadedPattern>
+                                    <shadedPattern>com.aliiensmp.aliienresize.core</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>com.aliiensmp.aliienResize.bstats</shadedPattern>
+                                    <shadedPattern>com.aliiensmp.aliienresize.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>co.aikar.commands</pattern>
-                                    <shadedPattern>com.aliiensmp.aliienResize.lib.acf</shadedPattern>
+                                    <shadedPattern>com.aliiensmp.aliienresize.lib.acf</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -118,6 +120,14 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
+        <repository>
+            <id>Artillex-Studios</id>
+            <url>https://repo.artillex-studios.com/releases/</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -140,15 +150,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.revxrsal</groupId>
-            <artifactId>zapper.api</artifactId>
-            <version>1.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId>
             <version>0.5.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
@@ -206,6 +211,18 @@
             <version>4.5.11</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/RedisEconomy.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.artillexstudios</groupId>
+            <artifactId>AxQuestBoardAPI</artifactId>
+            <version>3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>7.0.9</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

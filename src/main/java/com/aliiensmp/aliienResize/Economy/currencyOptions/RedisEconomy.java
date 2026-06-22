@@ -10,13 +10,15 @@ public class RedisEconomy implements CurrencyProvider {
 
     private RedisEconomyAPI api;
     private Currency currency;
+    private final String suffix;
 
     /**
      * Creates a RedisEconomy adapter for one configured currency.
      *
      * @param currencyName RedisEconomy currency name
      */
-    public RedisEconomy(String currencyName) {
+    public RedisEconomy(String currencyName, String suffix) {
+        this.suffix = suffix;
 
         if (Bukkit.getPluginManager().getPlugin("RedisEconomy") != null) {
             this.api = RedisEconomyAPI.getAPI();
@@ -43,5 +45,10 @@ public class RedisEconomy implements CurrencyProvider {
         if (!isValid()) return false;
 
         return this.currency.setPlayerBalance(player, this.currency.getBalance(player) - amount).transactionSuccess();
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

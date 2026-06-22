@@ -5,6 +5,17 @@ import org.bukkit.entity.Player;
 
 public class Experience implements CurrencyProvider {
 
+    private final String suffix;
+
+    /**
+     * Creates the experience currency adapter.
+     *
+     * @param suffix suffix displayed beside prices
+     */
+    public Experience(String suffix) {
+        this.suffix = suffix;
+    }
+
     /**
      * Rounds a configured price up to the minimum whole number of levels required.
      *
@@ -31,5 +42,10 @@ public class Experience implements CurrencyProvider {
 
         player.setLevel(player.getLevel() - getRequiredLevels(amount));
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

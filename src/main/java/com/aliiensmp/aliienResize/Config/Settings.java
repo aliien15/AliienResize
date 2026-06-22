@@ -2,9 +2,9 @@ package com.aliiensmp.aliienResize.Config;
 
 import com.aliiensmp.aliienResize.Config.Records.CustomCurrency;
 import com.aliiensmp.core.config.Key;
+import com.aliiensmp.core.lib.boostedyaml.YamlDocument;
 import com.aliiensmp.core.utils.sounds.CustomSound;
 import com.aliiensmp.core.utils.sounds.SoundUtils;
-import dev.dejvokep.boostedyaml.YamlDocument;
 
 import java.util.*;
 
@@ -15,49 +15,6 @@ public class Settings {
 
     @Key("hooks.placeholder-api.enabled")
     public static boolean HOOK_PAPI = true;
-
-    @Key("hooks.vault.enabled")
-    public static boolean HOOK_VAULT = true;
-
-    @Key("hooks.experience.enabled")
-    public static boolean HOOK_EXP = false;
-
-    @Key("hooks.player-points.enabled")
-    public static boolean HOOK_PLAYER_POINTS = false;
-
-    @Key("hooks.royale-economy.enabled")
-    public static boolean HOOK_ROYALE_ECO = false;
-
-    @Key("hooks.custom-economy.enabled")
-    public static boolean HOOK_CUSTOM_ECO = false;
-
-    @Key("hooks.ultra-economy.enabled")
-    public static boolean HOOK_ULTRA_ECO = false;
-
-    @Key("hooks.ultra-economy.currencies")
-    public static List<String> ULTRA_ECO_CURRENCIES = new ArrayList<>();
-
-    @Key("hooks.coins-engine.enabled")
-    public static boolean HOOK_COINS_ENGINE = false;
-    @Key("hooks.coins-engine.currencies")
-    public static List<String> COINS_ENGINE_CURRENCIES = new ArrayList<>();
-
-    @Key("hooks.excellent-economy.enabled")
-    public static boolean HOOK_EXCELLENT_ECO = false;
-
-    @Key("hooks.excellent-economy.currencies")
-    public static List<String> EXCELLENT_ECO_CURRENCIES = new ArrayList<>();
-
-    @Key("hooks.eco-bits.enabled")
-    public static boolean HOOK_ECO_BITS = false;
-    @Key("hooks.eco-bits.currencies")
-    public static List<String> ECO_BITS_CURRENCIES = new ArrayList<>();
-
-    @Key("hooks.redis-economy.enabled")
-    public static boolean HOOK_REDIS_ECO = false;
-
-    @Key("hooks.redis-economy.currencies")
-    public static List<String> REDIS_ECO_CURRENCIES = new ArrayList<>();
 
     @Key("sounds.enabled")
     public static boolean SOUNDS_ENABLED = true;

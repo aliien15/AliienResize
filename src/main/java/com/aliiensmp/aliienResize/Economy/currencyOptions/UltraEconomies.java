@@ -11,14 +11,16 @@ import java.util.Optional;
 public class UltraEconomies implements CurrencyProvider {
 
     private final String currencyName;
+    private final String suffix;
 
     /**
      * Creates an UltraEconomy adapter for one configured currency.
      *
      * @param currencyName UltraEconomy currency name
      */
-    public UltraEconomies(String currencyName) {
+    public UltraEconomies(String currencyName, String suffix) {
         this.currencyName = currencyName;
+        this.suffix = suffix;
     }
 
     /**
@@ -61,5 +63,10 @@ public class UltraEconomies implements CurrencyProvider {
 
         account.removeBalance(ueCurrency, amount);
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

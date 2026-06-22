@@ -10,14 +10,16 @@ public class ExcellentEconomy implements CurrencyProvider {
 
     private ExcellentEconomyAPI api = null;
     private final String currencyName;
+    private final String suffix;
 
     /**
      * Creates an ExcellentEconomy adapter for one configured currency.
      *
      * @param currencyName ExcellentEconomy currency id
      */
-    public ExcellentEconomy(String currencyName) {
+    public ExcellentEconomy(String currencyName, String suffix) {
         this.currencyName = currencyName;
+        this.suffix = suffix;
 
         if (Bukkit.getPluginManager().getPlugin("ExcellentEconomy") != null) {
             RegisteredServiceProvider<ExcellentEconomyAPI> rsp = Bukkit.getServicesManager().getRegistration(ExcellentEconomyAPI.class);
@@ -42,5 +44,10 @@ public class ExcellentEconomy implements CurrencyProvider {
     public boolean withdraw(Player player, double amount) {
         if (!isValid()) return false;
         return this.api.withdraw(player, this.currencyName, amount);
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

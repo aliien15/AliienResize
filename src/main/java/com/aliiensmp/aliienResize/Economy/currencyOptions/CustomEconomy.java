@@ -10,6 +10,7 @@ public class CustomEconomy implements CurrencyProvider {
     private final String id;
     private final String balancePlaceholder;
     private final String withdrawCommand;
+    private final String suffix;
 
     /**
      * Creates a PlaceholderAPI-driven custom currency adapter.
@@ -18,10 +19,11 @@ public class CustomEconomy implements CurrencyProvider {
      * @param balancePlaceholder placeholder used to resolve the player's balance
      * @param withdrawCommand console command used to withdraw funds
      */
-    public CustomEconomy(String id, String balancePlaceholder, String withdrawCommand) {
+    public CustomEconomy(String id, String balancePlaceholder, String withdrawCommand, String suffix) {
         this.id = id;
         this.balancePlaceholder = balancePlaceholder;
         this.withdrawCommand = withdrawCommand;
+        this.suffix = suffix;
     }
 
     @Override
@@ -54,5 +56,10 @@ public class CustomEconomy implements CurrencyProvider {
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

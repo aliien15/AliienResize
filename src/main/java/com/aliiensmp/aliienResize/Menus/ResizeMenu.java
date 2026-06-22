@@ -142,10 +142,11 @@ public class ResizeMenu {
 
         double price = sizeNode.price().price();
         String formattedPrice = (Math.rint(price) == price) ? String.valueOf((long) price) : String.valueOf(price);
+        String suffixText = plugin.getCurrencyManager().getSuffix(sizeNode.price().currency());
 
         if (!currency.hasBalance(player, price)) {
             if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
-            MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_FAIL.replace("%price%", formattedPrice));
+            MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_FAIL.replace("%price%", formattedPrice).replace("%suffix%", suffixText));
             return;
         }
 
@@ -157,7 +158,7 @@ public class ResizeMenu {
 
         grantPermission(player, sizeNode.permission());
 
-        MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_SUCCESS.replace("%price%", formattedPrice));
+        MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_SUCCESS.replace("%price%", formattedPrice).replace("%suffix%", suffixText));
 
         applyScale(player, sizeNode);
     }

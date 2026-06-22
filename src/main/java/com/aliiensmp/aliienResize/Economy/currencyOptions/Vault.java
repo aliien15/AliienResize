@@ -7,14 +7,16 @@ import org.bukkit.entity.Player;
 public class Vault implements CurrencyProvider {
 
     private final AliienResize plugin;
+    private final String suffix;
 
     /**
      * Creates the Vault currency adapter.
      *
      * @param plugin owning plugin instance
      */
-    public Vault(AliienResize plugin) {
+    public Vault(AliienResize plugin, String suffix) {
         this.plugin = plugin;
+        this.suffix = suffix;
     }
 
     @Override
@@ -32,5 +34,10 @@ public class Vault implements CurrencyProvider {
     public boolean withdraw(Player player, double amount) {
         if (!hasBalance(player, amount)) return false;
         return plugin.getVaultExpansion().getEconomy().withdrawPlayer(player, amount).transactionSuccess();
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

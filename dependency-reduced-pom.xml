@@ -4,7 +4,7 @@
   <groupId>com.aliiensmp</groupId>
   <artifactId>AliienResize</artifactId>
   <name>AliienResize</name>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>
@@ -42,6 +42,9 @@
                 </filter>
                 <filter>
                   <artifact>com.aliiensmp:AliienCore</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
                   <excludes>
                     <exclude>com/aliiensmp/core/lib/hikari/**</exclude>
                     <exclude>com/mysql/**</exclude>
@@ -53,15 +56,15 @@
               <relocations>
                 <relocation>
                   <pattern>com.aliiensmp.core</pattern>
-                  <shadedPattern>com.aliiensmp.aliienResize.core</shadedPattern>
+                  <shadedPattern>com.aliiensmp.aliienresize.core</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>org.bstats</pattern>
-                  <shadedPattern>com.aliiensmp.aliienResize.bstats</shadedPattern>
+                  <shadedPattern>com.aliiensmp.aliienresize.bstats</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>co.aikar.commands</pattern>
-                  <shadedPattern>com.aliiensmp.aliienResize.lib.acf</shadedPattern>
+                  <shadedPattern>com.aliiensmp.aliienresize.lib.acf</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -102,6 +105,14 @@
     <repository>
       <id>aikar</id>
       <url>https://repo.aikar.co/content/groups/aikar/</url>
+    </repository>
+    <repository>
+      <id>Artillex-Studios</id>
+      <url>https://repo.artillex-studios.com/releases/</url>
+    </repository>
+    <repository>
+      <id>sk89q-repo</id>
+      <url>https://maven.enginehub.org/repo/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -151,6 +162,18 @@
       <groupId>com.willfp</groupId>
       <artifactId>EcoBits</artifactId>
       <version>1.8.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.artillexstudios</groupId>
+      <artifactId>AxQuestBoardAPI</artifactId>
+      <version>3</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-bukkit</artifactId>
+      <version>7.0.9</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

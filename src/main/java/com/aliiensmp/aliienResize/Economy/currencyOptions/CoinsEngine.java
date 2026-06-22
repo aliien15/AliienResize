@@ -8,14 +8,16 @@ import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 public class CoinsEngine implements CurrencyProvider {
 
     private final String currencyName;
+    private final String suffix;
 
     /**
      * Creates a CoinsEngine currency adapter for one configured currency.
      *
      * @param currencyName CoinsEngine currency id
      */
-    public CoinsEngine(String currencyName) {
+    public CoinsEngine(String currencyName, String suffix) {
         this.currencyName = currencyName;
+        this.suffix = suffix;
     }
 
     @Override
@@ -43,5 +45,10 @@ public class CoinsEngine implements CurrencyProvider {
 
         CoinsEngineAPI.removeBalance(player, ceCurrency, amount);
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

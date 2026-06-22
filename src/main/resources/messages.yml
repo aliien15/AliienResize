@@ -13,9 +13,9 @@ messages:
     success: "&aAliienResize has been successfully reloaded!"
     fail: "&cThere was an internal error while trying to reload AliienResize!"
   purchase:
-    success: "&aYou have successfully purchased this size for %price%$!"
+    success: "&aYou have successfully purchased this size for %price% %suffix%!"
     currency-unavailable: "&cThis currency is currently unavailable (this might be a misconfiguration bug)"
-    fail: "&cYou do not have enough money to buy this size! &8(%price%)"
+    fail: "&cYou do not have enough money to buy this size! &8(%price% %suffix%)"
   no-permission: "&cYou do not have permission to do this!"
   force-set:
     player: "&aYour size was updated by an admin to %size_id%!"

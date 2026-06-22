@@ -26,4 +26,9 @@ public interface CurrencyProvider {
      * @requires hasBalance(player, amount)
      */
     boolean withdraw(Player player, double amount);
+
+    /**
+     * @return the suffix used to display prices in names/lores
+     */
+    String suffix();
 }

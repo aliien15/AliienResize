@@ -15,18 +15,14 @@ import com.aliiensmp.aliienResize.Listeners.WorldListener;
 import com.aliiensmp.aliienResize.Utils.ResizeUtils;
 import com.aliiensmp.core.AliienCore;
 import com.aliiensmp.core.config.ConfigManager;
+import com.aliiensmp.core.lib.boostedyaml.YamlDocument;
 import com.aliiensmp.core.utils.ColorUtils;
 import com.aliiensmp.core.utils.MessageUtils;
 import com.aliiensmp.core.utils.updatechecker.UpdateChecker;
 import com.aliiensmp.core.utils.updatechecker.UpdateNotifyListener;
-import dev.dejvokep.boostedyaml.YamlDocument;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import revxrsal.zapper.DependencyManager;
-import revxrsal.zapper.classloader.URLClassLoaderWrapper;
-import revxrsal.zapper.relocation.Relocation;
-import revxrsal.zapper.repository.Repository;
 import com.aliiensmp.aliienResize.Commands.PlayerCommands;
 
 import java.util.List;
@@ -34,8 +30,6 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.net.URLClassLoader;
 import java.util.logging.Level;
 
 public final class AliienResize extends JavaPlugin {
@@ -54,31 +48,6 @@ public final class AliienResize extends JavaPlugin {
     private static final String GIST = "https://gist.githubusercontent.com/aliien15/ecb083083130349214c79c53f73913fa/raw/AliienResize-version.txt";
 
     @Override
-    public void onLoad() {
-        File librariesFolder = new File(getDataFolder().getParentFile(), "AliienCore");
-
-        DependencyManager dependencyManager = new DependencyManager(
-                librariesFolder,
-                URLClassLoaderWrapper.wrap((URLClassLoader) getClassLoader())
-        );
-
-        dependencyManager.repository(Repository.mavenCentral());
-        dependencyManager.repository(Repository.maven("https://jitpack.io"));
-
-        dependencyManager.dependency("com.zaxxer:HikariCP:5.1.0");
-        dependencyManager.dependency("com.mysql:mysql-connector-j:9.6.0");
-        dependencyManager.dependency("org.xerial:sqlite-jdbc:3.45.1.0");
-        dependencyManager.dependency("dev.dejvokep:boosted-yaml:1.3.7");
-
-        dependencyManager.relocate(new Relocation(
-                "com{}zaxxer{}hikari".replace("{}", "."),
-                "com.aliiensmp.core.lib.hikari"
-        ));
-
-        dependencyManager.load();
-    }
-
-    @Override
     public void onEnable() {
         AliienCore.init(this);
 
@@ -92,9 +61,6 @@ public final class AliienResize extends JavaPlugin {
 
         resizeUtils = new ResizeUtils();
         vaultExpansion = new VaultExpansion(this);
-
-        currencyManager = new CurrencyManager(this);
-        currencyManager.loadCurrencies();
 
         setupUpdateChecker();
         setupPapiHook();
@@ -169,12 +135,15 @@ public final class AliienResize extends JavaPlugin {
 
             mainMenuFile = ConfigManager.loadConfig(this, "main-menu.yml");
 
-            sizesFile = ConfigManager.loadConfig(this, "sizes.yml");
-            Sizes.loadFromConfigs(sizesFile, mainMenuFile, this);
-
             settingsFile = ConfigManager.loadConfig(this, "settings.yml");
             ConfigManager.bindConfig(settingsFile, Settings.class);
             Settings.loadDynamicData(settingsFile);
+
+            currencyManager = new CurrencyManager(this);
+            currencyManager.loadCurrencies();
+
+            sizesFile = ConfigManager.loadConfig(this, "sizes.yml");
+            Sizes.loadFromConfigs(sizesFile, mainMenuFile, this);
 
             confirmationMenuFile = ConfigManager.loadConfig(this, "confirmation-menu.yml");
             ConfigManager.bindConfig(confirmationMenuFile, Confirmation.class);
@@ -237,4 +206,8 @@ public final class AliienResize extends JavaPlugin {
     public CurrencyManager getCurrencyManager() { return currencyManager; }
     public VaultExpansion getVaultExpansion() { return vaultExpansion; }
     public ResizeUtils getResizeUtils() { return resizeUtils; }
+
+    public YamlDocument getSettingsFile() {
+        return settingsFile;
+    }
 }

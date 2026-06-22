@@ -11,14 +11,16 @@ import java.math.BigDecimal;
 public class EcoBits implements CurrencyProvider {
 
     private final String currencyName;
+    private final String suffix;
 
     /**
      * Creates an EcoBits currency adapter for one configured currency.
      *
      * @param currencyName EcoBits currency id
      */
-    public EcoBits(String currencyName) {
+    public EcoBits(String currencyName, String suffix) {
         this.currencyName = currencyName;
+        this.suffix = suffix;
     }
 
     @Override
@@ -49,5 +51,10 @@ public class EcoBits implements CurrencyProvider {
 
         CurrencyUtils.adjustBalance(player, bitCurrency, BigDecimal.valueOf(-amount));
         return true;
+    }
+
+    @Override
+    public String suffix() {
+        return suffix;
     }
 }

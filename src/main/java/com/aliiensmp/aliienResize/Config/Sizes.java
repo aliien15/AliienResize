@@ -8,8 +8,8 @@ import com.aliiensmp.aliienResize.Config.Records.PriceData;
 import com.aliiensmp.aliienResize.Config.Records.SizeNode;
 import com.aliiensmp.aliienResize.Menus.MenuAction;
 import com.aliiensmp.core.items.ItemBuilder;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import com.aliiensmp.core.lib.boostedyaml.YamlDocument;
+import com.aliiensmp.core.lib.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -111,9 +111,10 @@ public class Sizes {
         // Format placeholders
         String priceText = (Math.rint(amount) == amount) ? String.valueOf((long) amount) : String.valueOf(amount);
         String scaleText = String.valueOf(scale);
+        String suffixText = purchasable ? plugin.getCurrencyManager().getSuffix(id) : "";
 
-        List<String> availableLore = replacePlaceholders(rawLore, "%price%", priceText, "%scale%", scaleText, "%permission%", permission);
-        List<String> noPermLore = replacePlaceholders(rawNoPermLore, "%price%", priceText, "%scale%", scaleText, "%permission%", permission);
+        List<String> availableLore = replacePlaceholders(rawLore, "%price%", priceText, "%scale%", scaleText, "%permission%", permission, "%suffix%", suffixText);
+        List<String> noPermLore = replacePlaceholders(rawNoPermLore, "%price%", priceText, "%scale%", scaleText, "%permission%", permission, "%suffix%", suffixText);
 
         ItemFlag[] flagsArray = itemFlags.toArray(ItemFlag[]::new);
 
@@ -159,7 +160,7 @@ public class Sizes {
             String targetPageText = String.valueOf(targetPage);
 
             String resolvedName = rawItem.name().replace("%target_page%", targetPageText);
-            List<String> resolvedLore = replacePlaceholders(rawItem.lore(), "%target_page%", targetPageText, "", "", "", "");
+            List<String> resolvedLore = replacePlaceholders(rawItem.lore(), "%target_page%", targetPageText, "", "", "", "", "", "");
             ItemStack cachedItem = buildItem(rawItem.material(), resolvedName, resolvedLore, rawItem.modelData(), flagsArray, false);
 
             for (int slot : rawItem.slots()) {
@@ -217,9 +218,9 @@ public class Sizes {
                 .toList();
     }
 
-    private static List<String> replacePlaceholders(List<String> list, String p1, String v1, String p2, String v2, String p3, String v3) {
+    private static List<String> replacePlaceholders(List<String> list, String p1, String v1, String p2, String v2, String p3, String v3, String p4, String v4) {
         return list.stream()
-                .map(line -> line.replace(p1, v1).replace(p2, v2).replace(p3, v3))
+                .map(line -> line.replace(p1, v1).replace(p2, v2).replace(p3, v3).replace(p4, v4))
                 .toList();
     }
 
