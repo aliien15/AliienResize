@@ -8,6 +8,8 @@ import com.aliiensmp.aliienResize.Config.Records.SizeNode;
 import com.aliiensmp.aliienResize.Config.Settings;
 import com.aliiensmp.aliienResize.Config.Sizes;
 import com.aliiensmp.aliienResize.Economy.CurrencyProvider;
+import com.aliiensmp.aliienResize.Listeners.PlayerConnectionListener;
+import com.aliiensmp.aliienResize.Utils.ResizeUtils;
 import com.aliiensmp.core.menu.AliienGUI;
 import com.aliiensmp.core.menu.ClickableItem;
 import com.aliiensmp.core.utils.MessageUtils;
@@ -83,7 +85,10 @@ public class ResizeMenu {
 
                 runSync(player, () -> {
                     Optional.ofNullable(player.getAttribute(Attribute.GENERIC_SCALE))
-                            .ifPresent(attribute -> attribute.setBaseValue(1.0));
+                            .ifPresent(attribute -> {
+                                attribute.setBaseValue(1.0);
+                                PlayerConnectionListener.cache.put(player.getUniqueId(), 1.0);
+                            });
 
                     MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_DEFAULT);
                     if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND.play(player);
@@ -173,7 +178,7 @@ public class ResizeMenu {
     }
 
     private void applyScale(Player player, SizeNode sizeNode) {
-         if (!plugin.getResizeUtils().hasEnoughSpace(player, sizeNode.scale())) {
+         if (!ResizeUtils.INSTANCE.hasEnoughSpace(player, sizeNode.scale())) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL);
             if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player);
             return;
@@ -185,6 +190,7 @@ public class ResizeMenu {
             Optional.ofNullable(player.getAttribute(Attribute.GENERIC_SCALE))
                     .ifPresent(attribute -> attribute.setBaseValue(sizeNode.scale()));
 
+            PlayerConnectionListener.cache.put(player.getUniqueId(), sizeNode.scale());
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS);
             if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND.play(player);
         });

@@ -4,6 +4,9 @@ main: com.aliiensmp.aliienResize.AliienResize
 api-version: '1.21'
 softdepend: [Vault, PlaceholderAPI, PlayerPoints, UltraEconomy, CoinsEngine, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy]
 
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.10
+
 commands:
   resize:
     description: Main command for AliienResize.

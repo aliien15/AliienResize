@@ -1,5 +1,6 @@
 package com.aliiensmp.aliienResize;
 
+import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.PaperCommandManager;
 import com.aliiensmp.aliienResize.Commands.AdminCommands;
@@ -8,11 +9,15 @@ import com.aliiensmp.aliienResize.Config.Messages;
 import com.aliiensmp.aliienResize.Config.Records.SizeNode;
 import com.aliiensmp.aliienResize.Config.Settings;
 import com.aliiensmp.aliienResize.Config.Sizes;
+import com.aliiensmp.aliienResize.Database.DatabaseProvider;
+import com.aliiensmp.aliienResize.Database.options.MariaDB;
+import com.aliiensmp.aliienResize.Database.options.MySQL;
+import com.aliiensmp.aliienResize.Database.options.None;
 import com.aliiensmp.aliienResize.Economy.CurrencyManager;
 import com.aliiensmp.aliienResize.Hooks.PapiExpansion;
 import com.aliiensmp.aliienResize.Hooks.VaultExpansion;
+import com.aliiensmp.aliienResize.Listeners.PlayerConnectionListener;
 import com.aliiensmp.aliienResize.Listeners.WorldListener;
-import com.aliiensmp.aliienResize.Utils.ResizeUtils;
 import com.aliiensmp.core.AliienCore;
 import com.aliiensmp.core.config.ConfigManager;
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument;
@@ -27,6 +32,7 @@ import com.aliiensmp.aliienResize.Commands.PlayerCommands;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
@@ -40,10 +46,11 @@ public final class AliienResize extends JavaPlugin {
     private YamlDocument settingsFile;
     private YamlDocument confirmationMenuFile;
 
-    private ResizeUtils resizeUtils;
     private CurrencyManager currencyManager;
 
     private VaultExpansion vaultExpansion;
+
+    private DatabaseProvider databaseProvider;
 
     private static final String GIST = "https://gist.githubusercontent.com/aliien15/ecb083083130349214c79c53f73913fa/raw/AliienResize-version.txt";
 
@@ -56,10 +63,10 @@ public final class AliienResize extends JavaPlugin {
             return;
         }
 
+        setupDatabase();
         setupCommands();
         setupListeners();
 
-        resizeUtils = new ResizeUtils();
         vaultExpansion = new VaultExpansion(this);
 
         setupUpdateChecker();
@@ -71,6 +78,7 @@ public final class AliienResize extends JavaPlugin {
 
     private void setupListeners() {
         getServer().getPluginManager().registerEvents(new WorldListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this), this);
     }
 
     @Override
@@ -84,8 +92,46 @@ public final class AliienResize extends JavaPlugin {
         }
     }
 
+    private void setupDatabase() {
+        databaseProvider = switch (settingsFile.getString("database.type").toUpperCase(Locale.ROOT)) {
+            case "MYSQL" -> {
+                AliienCore.getDatabase().connectMySQL(
+                        settingsFile.getString("database.settings.host", "localhost"),
+                        settingsFile.getInt("database.settings.port", 3306),
+                        settingsFile.getString("database.settings.database", "server"),
+                        settingsFile.getString("database.settings.username", "root"),
+                        settingsFile.getString("database.settings.password", "password"),
+                        settingsFile.getInt("database.settings.advanced.max-pool-size", 10),
+                        settingsFile.getInt("database.settings.advanced.min-idle", 10),
+                        settingsFile.getLong("database.settings.advanced.connection-timeout", 10000L),
+                        settingsFile.getLong("database.settings.advanced.max-lifetime", 1800000L)
+                );
+                yield new MySQL();
+            }
+            case "MARIADB" -> {
+                AliienCore.getDatabase().connectMariaDB(
+                        settingsFile.getString("database.settings.host", "localhost"),
+                        settingsFile.getInt("database.settings.port", 3306),
+                        settingsFile.getString("database.settings.database", "server"),
+                        settingsFile.getString("database.settings.username", "root"),
+                        settingsFile.getString("database.settings.password", "password"),
+                        settingsFile.getInt("database.settings.advanced.max-pool-size", 10),
+                        settingsFile.getInt("database.settings.advanced.min-idle", 10),
+                        settingsFile.getLong("database.settings.advanced.connection-timeout", 10000L),
+                        settingsFile.getLong("database.settings.advanced.max-lifetime", 1800000L)
+                );
+                yield new MariaDB();
+            }
+            case "NONE" -> new None();
+            default -> {
+                getLogger().warning("Invalid database type detected, therefore defaulting to NONE. If you are sure that you have typed your storage type correctly and this message is showing up, then this is a bug and must be reported!");
+                yield new None();
+            }
+        };
+    }
+
     private void setupCommands() {
-        PaperCommandManager commandManager = new co.aikar.commands.PaperCommandManager(this);
+        PaperCommandManager commandManager = new PaperCommandManager(this);
 
         // Prefix
         commandManager.getLocales().addMessage(
@@ -113,6 +159,25 @@ public final class AliienResize extends JavaPlugin {
                     .map(SizeNode::id)
                     .toList();
 
+        });
+
+        // Context resolver
+        commandManager.getCommandContexts().registerContext(SizeNode.class, c -> {
+            String sizeId = c.popFirstArg(); // Grabs the string the player typed
+            Player player = c.getPlayer();
+
+            SizeNode sizeNode = Sizes.SIZES_BY_ID.entrySet().stream()
+                    .filter(entry -> entry.getKey().equalsIgnoreCase(sizeId))
+                    .map(Map.Entry::getValue)
+                    .findFirst()
+                    .orElse(null);
+
+            if (sizeNode == null) {
+                if (Settings.SOUNDS_ENABLED && player != null) Settings.ERROR_SOUND.play(player);
+                throw new InvalidCommandArgument(Messages.NULL_ID, false);
+            }
+
+            return sizeNode;
         });
 
         commandManager.registerCommand(new PlayerCommands(this));
@@ -205,7 +270,7 @@ public final class AliienResize extends JavaPlugin {
 
     public CurrencyManager getCurrencyManager() { return currencyManager; }
     public VaultExpansion getVaultExpansion() { return vaultExpansion; }
-    public ResizeUtils getResizeUtils() { return resizeUtils; }
+    public DatabaseProvider getDatabaseProvider() { return databaseProvider; }
 
     public YamlDocument getSettingsFile() {
         return settingsFile;
