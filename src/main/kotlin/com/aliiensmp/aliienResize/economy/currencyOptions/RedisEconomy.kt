@@ -1,6 +1,6 @@
-package com.aliiensmp.aliienResize.Economy.currencyOptions
+package com.aliiensmp.aliienResize.economy.currencyOptions
 
-import com.aliiensmp.aliienResize.Economy.CurrencyProvider
+import com.aliiensmp.aliienResize.economy.CurrencyProvider
 import dev.unnm3d.rediseconomy.api.RedisEconomyAPI
 import dev.unnm3d.rediseconomy.currency.Currency
 import org.bukkit.Bukkit

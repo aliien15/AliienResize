@@ -1,9 +1,6 @@
-package com.aliiensmp.aliienResize.Utils
+package com.aliiensmp.aliienResize.utils
 
-import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.attribute.Attribute
-import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.util.BoundingBox
 import kotlin.math.floor

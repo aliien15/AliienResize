@@ -1,4 +1,4 @@
-package com.aliiensmp.aliienResize.Listeners
+package com.aliiensmp.aliienResize.listeners
 
 import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.Config.Messages

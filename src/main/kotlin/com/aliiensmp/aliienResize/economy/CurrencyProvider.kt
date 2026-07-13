@@ -1,4 +1,4 @@
-package com.aliiensmp.aliienResize.Economy
+package com.aliiensmp.aliienResize.economy
 
 import org.bukkit.entity.Player
 

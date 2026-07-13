@@ -5,7 +5,7 @@ import com.aliiensmp.aliienResize.AliienResize;
 import com.aliiensmp.aliienResize.Config.Messages;
 import com.aliiensmp.aliienResize.Config.Records.SizeNode;
 import com.aliiensmp.aliienResize.Config.Settings;
-import com.aliiensmp.aliienResize.Utils.ResizeUtils;
+import com.aliiensmp.aliienResize.utils.ResizeUtils;
 import com.aliiensmp.core.utils.MessageUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

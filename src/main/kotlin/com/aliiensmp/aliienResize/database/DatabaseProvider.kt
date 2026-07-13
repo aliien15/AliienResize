@@ -1,4 +1,4 @@
-package com.aliiensmp.aliienResize.Database
+package com.aliiensmp.aliienResize.database
 
 import java.util.UUID
 import java.util.concurrent.CompletableFuture

@@ -1,4 +1,4 @@
-package com.aliiensmp.aliienResize.Listeners
+package com.aliiensmp.aliienResize.listeners
 
 import com.aliiensmp.aliienResize.AliienResize
 import org.bukkit.attribute.Attribute

@@ -1,11 +1,11 @@
-package com.aliiensmp.aliienResize.Database.options
+package com.aliiensmp.aliienResize.database.options
 
-import com.aliiensmp.aliienResize.Database.DatabaseProvider
+import com.aliiensmp.aliienResize.database.DatabaseProvider
 import com.aliiensmp.core.AliienCore
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-class MariaDB : DatabaseProvider {
+class MySQL : DatabaseProvider {
 
     override fun init() {
         val query = "CREATE TABLE IF NOT EXISTS player_scales(" +

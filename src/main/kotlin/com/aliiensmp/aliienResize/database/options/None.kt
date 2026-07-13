@@ -1,8 +1,6 @@
-package com.aliiensmp.aliienResize.Database.options
+package com.aliiensmp.aliienResize.database.options
 
-import com.aliiensmp.aliienResize.Database.DatabaseProvider
-import org.bukkit.Bukkit.getPlayer
-import org.bukkit.attribute.Attribute
+import com.aliiensmp.aliienResize.database.DatabaseProvider
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 

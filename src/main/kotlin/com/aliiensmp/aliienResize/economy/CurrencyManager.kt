@@ -1,7 +1,7 @@
-package com.aliiensmp.aliienResize.Economy
+package com.aliiensmp.aliienResize.economy
 
 import com.aliiensmp.aliienResize.AliienResize
-import com.aliiensmp.aliienResize.Economy.currencyOptions.*
+import com.aliiensmp.aliienResize.economy.currencyOptions.*
 import org.bukkit.Bukkit
 
 class CurrencyManager(private val plugin: AliienResize) {

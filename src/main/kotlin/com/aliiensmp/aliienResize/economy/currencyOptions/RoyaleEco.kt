@@ -1,6 +1,6 @@
-package com.aliiensmp.aliienResize.Economy.currencyOptions
+package com.aliiensmp.aliienResize.economy.currencyOptions
 
-import com.aliiensmp.aliienResize.Economy.CurrencyProvider
+import com.aliiensmp.aliienResize.economy.CurrencyProvider
 import me.qKing12.RoyaleEconomy.RoyaleEconomy
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
