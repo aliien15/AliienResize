@@ -4,7 +4,6 @@
 **A free, high-performance player scaling plugin for Minecraft Servers.**
 
 [![Paper](https://img.shields.io/badge/Paper-1.21-blue?style=flat-square)](https://papermc.io/)
-[![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square)](https://adoptium.net/)
 [![Folia](https://img.shields.io/badge/Folia-Supported-success?style=flat-square)](https://github.com/PaperMC/Folia)
 
 </div>
