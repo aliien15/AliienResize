@@ -1,6 +1,6 @@
 name: AliienResize
 version: '${project.version}'
-main: com.aliiensmp.aliienResize.AliienResize
+main: AliienResize
 api-version: '1.21'
 softdepend: [Vault, PlaceholderAPI, PlayerPoints, UltraEconomy, CoinsEngine, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy]
 

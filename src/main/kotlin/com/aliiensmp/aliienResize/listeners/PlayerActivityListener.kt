@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.listeners
 
-import com.aliiensmp.aliienResize.AliienResize
+import AliienResize
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

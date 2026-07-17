@@ -1,7 +1,6 @@
 package com.aliiensmp.aliienResize.menus
 
-import com.aliiensmp.aliienResize.AliienResize
-import com.aliiensmp.aliienResize.Menus.MenuAction
+import AliienResize
 import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.Sizes

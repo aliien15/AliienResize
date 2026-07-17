@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.listeners
 
-import com.aliiensmp.aliienResize.AliienResize
+import AliienResize
 import com.aliiensmp.aliienResize.Config.Messages
 import com.aliiensmp.aliienResize.Config.Settings
 import com.aliiensmp.core.utils.MessageUtils

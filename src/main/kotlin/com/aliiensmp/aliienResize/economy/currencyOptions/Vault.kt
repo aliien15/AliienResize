@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.economy.currencyOptions
 
-import com.aliiensmp.aliienResize.AliienResize
+import AliienResize
 import com.aliiensmp.aliienResize.economy.CurrencyProvider
 import org.bukkit.entity.Player
 

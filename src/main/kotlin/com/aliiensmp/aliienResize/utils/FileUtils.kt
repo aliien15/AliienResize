@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.utils
 
-import com.aliiensmp.aliienResize.AliienResize
+import AliienResize
 import com.aliiensmp.aliienResize.Config.Records.PriceData
 import com.aliiensmp.aliienResize.Config.Records.SizeNode
 import com.aliiensmp.aliienResize.Config.Settings

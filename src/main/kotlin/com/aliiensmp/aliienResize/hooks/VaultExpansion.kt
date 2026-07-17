@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.hooks
 
-import com.aliiensmp.aliienResize.AliienResize
+import AliienResize
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
