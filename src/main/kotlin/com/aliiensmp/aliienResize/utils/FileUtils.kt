@@ -1,9 +1,9 @@
 package com.aliiensmp.aliienResize.utils
 
 import AliienResize
-import com.aliiensmp.aliienResize.Config.Records.PriceData
-import com.aliiensmp.aliienResize.Config.Records.SizeNode
-import com.aliiensmp.aliienResize.Config.Settings
+import com.aliiensmp.aliienResize.config.data.PriceData
+import com.aliiensmp.aliienResize.config.data.SizeNode
+import com.aliiensmp.aliienResize.config.Settings
 import org.bukkit.entity.Player
 import java.io.IOException
 import java.nio.charset.StandardCharsets

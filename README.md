@@ -28,8 +28,7 @@ Whether you want to sell sizes through your server's economy, grant them as VIP 
 ## 📦 Requirements
 
 * **Server Software:** Paper, Purpur, Spigot or Folia (1.21+)
-* **Java Version:** Java 21 or higher
-* **Soft-Dependencies:** Vault, PlaceholderAPI (For economies & placeholders)
+* **Soft-Dependencies:** Vault, PlaceholderAPI (For economies & placeholders) and any economy plugin you might want to you (check the documentation for available options)
 
 ## 🛠️ Installation
 
@@ -62,9 +61,9 @@ The reason this project is open source is just so you can directly contribute wi
 
 If you are a developer looking to contribute:
 1. Clone the repository.
-2. Ensure you have Java 21 installed.
+2. Ensure everything you do is in kotlin (while you could technically shove java code in here, I'd rather keep everything the same language)
 3. This project uses **Maven**. Run `mvn clean package` to build the jar.
-4. Code should stick to modern Java practices (Records, Streams, Immutable Collections, Functional Programming, etc as much as possible) and must maintain strict Folia compatibility (failure to stand by these rules will result in PRs being denied)
+4. Make sure your code is actually clean, safe, optimized and with no bugs or memory leaks (basically use common sense lol)
 
 ## 📄 License
 

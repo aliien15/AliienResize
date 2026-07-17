@@ -9,7 +9,6 @@ import com.aliiensmp.aliienResize.config.data.CachedSizeItem
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.economy.CurrencyProvider
 import com.aliiensmp.aliienResize.listeners.PlayerConnectionListener
-import com.aliiensmp.aliienResize.menus.ConfirmationMenu.openConfirmationMenu
 import com.aliiensmp.aliienResize.utils.ResizeUtils
 import com.aliiensmp.core.menu.AliienGUI
 import com.aliiensmp.core.menu.ClickableItem
@@ -19,7 +18,6 @@ import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.*
 import java.util.logging.Level
 import kotlin.math.max
 import kotlin.math.min
@@ -27,7 +25,7 @@ import kotlin.math.round
 
 class ResizeMenu(private val plugin: AliienResize) {
 
-    fun openMainMenu(player: Player, requestedPage: Int) {
+    fun openMenu(player: Player, requestedPage: Int) {
         val page = sanitizePage(requestedPage)
         val currentPlayerScale = player.getAttribute(Attribute.GENERIC_SCALE)?.value ?: 1.0
         val gui = AliienGUI(Sizes.MENU_TITLE, Sizes.MENU_ROWS)
@@ -66,7 +64,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         when (cachedItem.action) {
             MenuAction.NEXT_PAGE, MenuAction.PREVIOUS_PAGE -> {
                 if (Settings.SOUNDS_ENABLED) Settings.CLICK_SOUND!!.play(player)
-                player.openMainMenu(cachedItem.targetPage)
+                openMenu(player, cachedItem.targetPage)
             }
 
             MenuAction.CLEAR -> {
@@ -95,7 +93,7 @@ class ResizeMenu(private val plugin: AliienResize) {
 
         if (sizeNode.price.isPurchasable) {
             if (Settings.CONFIRMATION_MENU_ENABLED) {
-                player.openConfirmationMenu(sizeNode, confirmationItem, { handlePurchase(player, sizeNode)}, { player.openMainMenu(currentPage)} )
+                ConfirmationMenu().openMenu(player, sizeNode, confirmationItem, { handlePurchase(player, sizeNode)}, { openMenu(player, currentPage)} )
             } else {
                 handlePurchase(player, sizeNode)
             }

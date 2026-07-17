@@ -1,8 +1,8 @@
 package com.aliiensmp.aliienResize.listeners
 
 import AliienResize
-import com.aliiensmp.aliienResize.Config.Messages
-import com.aliiensmp.aliienResize.Config.Settings
+import com.aliiensmp.aliienResize.config.Messages
+import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
@@ -31,6 +31,6 @@ class WorldListener(private val plugin: AliienResize) : Listener {
         }, null)
 
         MessageUtils.send(player, Messages.PREFIX, Messages.CHANGE_TO_BLACKLISTED_WORLD)
-        if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND.play(player)
+        if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND?.play(player)
     }
 }

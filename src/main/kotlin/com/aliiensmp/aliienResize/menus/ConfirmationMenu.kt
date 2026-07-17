@@ -13,8 +13,12 @@ import kotlin.math.round
 
 class ConfirmationMenu {
 
-    fun openConfirmationMenu(player: Player, sizeNode: SizeNode, displayItem: ItemStack, onConfirm: Runnable, onCancel: Runnable) {
+    fun openMenu(player: Player, sizeNode: SizeNode, displayItem: ItemStack, onConfirm: Runnable, onCancel: Runnable) {
         val gui = AliienGUI(Confirmation.CONFIRMATION_MENU_TITLE, Confirmation.CONFIRMATION_MENU_ROWS)
+
+        Confirmation.CONFIRMATION_MENU_DISPLAY_SLOTS.forEach { slot ->
+            gui.setItem(slot, ClickableItem.empty(displayItem))
+        }
 
         val price = sizeNode.price.price
         val formattedPrice = if (round(price) == price) price.toLong().toString() else price.toString()
@@ -43,10 +47,12 @@ class ConfirmationMenu {
                     onCancel.run()
                 }
 
-                else -> ClickableItem.empty(item)
+                ConfirmationMenuAction.NONE -> ClickableItem.empty(item)
             }
 
             buttonData.slots.forEach { gui.setItem(it, clickableItem) }
         }
+
+        gui.open(player, 1)
     }
 }

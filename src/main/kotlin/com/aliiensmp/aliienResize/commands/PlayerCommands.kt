@@ -19,7 +19,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     fun openMenu(player: Player) {
         if (!canUseInWorld(player)) return
 
-        ResizeMenu(plugin).openMainMenu(player, 1)
+        ResizeMenu(plugin).openMenu(player, 1)
 
         if (Settings.SOUNDS_ENABLED)
             Settings.SUCCESS_SOUND?.play(player)

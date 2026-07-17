@@ -1,7 +1,7 @@
 package com.aliiensmp.aliienResize.config
 
 import AliienResize
-import com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction
+import com.aliiensmp.aliienResize.menus.ConfirmationMenuAction
 import com.aliiensmp.core.config.Key
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument
 import com.aliiensmp.core.lib.boostedyaml.block.implementation.Section
