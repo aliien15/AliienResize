@@ -1,6 +1,5 @@
 package com.aliiensmp.aliienResize.menus
 
-import com.aliiensmp.aliienResize.Menus.ConfirmationMenuAction
 import com.aliiensmp.aliienResize.config.Confirmation
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
@@ -44,7 +43,7 @@ class ConfirmationMenu {
                     onCancel.run()
                 }
 
-                ConfirmationMenuAction.NONE -> ClickableItem.empty(item)
+                else -> ClickableItem.empty(item)
             }
 
             buttonData.slots.forEach { gui.setItem(it, clickableItem) }
