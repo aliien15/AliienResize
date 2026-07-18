@@ -70,6 +70,15 @@ class ResizeMenu(private val plugin: AliienResize) {
             MenuAction.CLEAR -> {
                 player.closeInventory()
 
+                if (!ResizeUtils.hasEnoughSpace(player, 1.0)) {
+                    MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
+
+                    if (Settings.SOUNDS_ENABLED)
+                        Settings.ERROR_SOUND?.play(player)
+
+                    return
+                }
+
                 player.runSync {
                     player.getAttribute(Attribute.GENERIC_SCALE)?.let { attribute ->
                         attribute.baseValue = 1.0
