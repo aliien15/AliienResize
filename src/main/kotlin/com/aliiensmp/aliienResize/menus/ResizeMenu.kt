@@ -113,7 +113,7 @@ class ResizeMenu(private val plugin: AliienResize) {
             return
         }
 
-        this.closeInventory() // Fixed the implicit this call here for cleanliness
+        this.closeInventory()
 
         this.runSync {
             this.getAttribute(Attribute.GENERIC_SCALE)?.let {
