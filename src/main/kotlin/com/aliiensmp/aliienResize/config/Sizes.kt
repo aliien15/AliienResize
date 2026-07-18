@@ -27,10 +27,7 @@ object Sizes {
     val MENU_LOCKED_MATERIAL: Material
         get() = Material.matchMaterial(RAW_LOCKED_MATERIAL.uppercase(Locale.ROOT)) ?: Material.BARRIER
 
-    @Key("defaults.lore")
     var MENU_DEFAULT_LORE: List<String> = emptyList()
-
-    @Key("defaults.lore-without-perm")
     var MENU_DEFAULT_LORE_NO_PERM: List<String> = emptyList()
 
     val SIZES_BY_ID = linkedMapOf<String, SizeNode>()
@@ -59,6 +56,9 @@ object Sizes {
         SIZE_ITEMS_BY_PAGE.clear()
         ACTION_ITEMS_BY_PAGE.clear()
         MENU_MAX_PAGE = 1
+
+        MENU_DEFAULT_LORE = sizesConfig.getStringList("defaults.lore") ?: emptyList()
+        MENU_DEFAULT_LORE_NO_PERM = sizesConfig.getStringList("defaults.lore-without-perm") ?: emptyList()
 
         val maxSlots = MENU_ROWS * 9
 

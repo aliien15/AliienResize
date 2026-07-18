@@ -58,6 +58,7 @@ class AliienResize : JavaPlugin() {
     override fun onEnable() {
         AliienCore.init(this)
 
+        vaultExpansion = VaultExpansion(this)
         if (!loadConfigurations()) {
             server.pluginManager.disablePlugin(this)
             return
@@ -66,8 +67,6 @@ class AliienResize : JavaPlugin() {
         setupDatabase()
         setupCommands()
         setupListeners()
-
-        vaultExpansion = VaultExpansion(this)
 
         setupUpdateChecker()
         setupPapiHook()
@@ -148,7 +147,6 @@ class AliienResize : JavaPlugin() {
             val sizeId = c.popFirstArg()
             val player = c.player
 
-            // Kotlin's gorgeous alternative to .stream().filter().findFirst().orElse(null)
             val sizeNode = Sizes.SIZES_BY_ID.values.firstOrNull { it.id.equals(sizeId, ignoreCase = true) }
                 ?: run {
                     if (Settings.SOUNDS_ENABLED) player?.let { Settings.ERROR_SOUND?.play(it) }
@@ -172,6 +170,7 @@ class AliienResize : JavaPlugin() {
             ConfigManager.bindConfig(messagesFile, Messages)
 
             mainMenuFile = ConfigManager.loadConfig(this, "main-menu.yml")
+            ConfigManager.bindConfig(mainMenuFile, Sizes)
 
             settingsFile = ConfigManager.loadConfig(this, "settings.yml")
             ConfigManager.bindConfig(settingsFile, Settings)
