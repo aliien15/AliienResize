@@ -9,9 +9,11 @@ import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.Sizes
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.database.DatabaseProvider
+import com.aliiensmp.aliienResize.database.options.H2
 import com.aliiensmp.aliienResize.database.options.MariaDB
 import com.aliiensmp.aliienResize.database.options.MySQL
 import com.aliiensmp.aliienResize.database.options.None
+import com.aliiensmp.aliienResize.database.options.SQLite
 import com.aliiensmp.aliienResize.economy.CurrencyManager
 import com.aliiensmp.aliienResize.hooks.PapiExpansion
 import com.aliiensmp.aliienResize.hooks.VaultExpansion
@@ -121,11 +123,21 @@ class AliienResize : JavaPlugin() {
                 MariaDB()
             }
             "NONE" -> None()
+            "H2" -> {
+                AliienCore.getDatabase().connectH2(this, "databse")
+                H2()
+            }
+            "SQLITE" -> {
+                AliienCore.getDatabase().connectSQLite(this, "database")
+                SQLite()
+            }
             else -> {
                 logger.warning("Invalid database type detected, therefore defaulting to NONE. If you are sure that you have typed your storage type correctly and this message is showing up, then this is a bug and must be reported!")
                 None()
             }
         }
+
+        databaseProvider.init()
     }
 
     private fun setupCommands() {

@@ -2,6 +2,7 @@ package com.aliiensmp.aliienResize.database.options
 
 import com.aliiensmp.aliienResize.database.DatabaseProvider
 import com.aliiensmp.core.AliienCore
+import java.sql.SQLException
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -30,7 +31,7 @@ class MariaDB : DatabaseProvider {
         return AliienCore.getDatabase().queryAsync(query, { rs ->
             try {
                 if (rs.next()) rs.getDouble("scale_value") else null
-            } catch (_: Exception) {
+            } catch (_: SQLException) {
                 null
             }
         }, playerUuid.toString())

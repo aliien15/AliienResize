@@ -6,7 +6,7 @@ import java.sql.SQLException
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-class MySQL : DatabaseProvider {
+class H2 : DatabaseProvider {
 
     override fun init() {
         val query = "CREATE TABLE IF NOT EXISTS player_scales(" +
@@ -19,10 +19,13 @@ class MySQL : DatabaseProvider {
     }
 
     override fun saveScale(playerUuid: UUID, scale: Double) {
-        val query = "INSERT INTO player_scales(player_uuid, scale_value) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE scale_value = ?"
+        val query = "MERGE INTO player_scales t " +
+                "USING (VALUES(?, ?)) AS s(player_uuid, scale_value) " +
+                "ON (t.player_uuid = s.player_uuid) " +
+                "WHEN MATCHED THEN UPDATE SET scale_value = s.scale_value " +
+                "WHEN NOT MATCHED THEN INSERT (player_uuid, scale_value) VALUES (s.player_uuid, s.scale_value);"
 
-        AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale, scale)
+        AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale)
     }
 
     override fun loadScale(playerUuid: UUID): CompletableFuture<Double?> {

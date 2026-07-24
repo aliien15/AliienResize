@@ -4,10 +4,11 @@
 
 # Used to store the plugin data
 database:
-  # Valid types: NONE, MYSQL, MARIADB
+  # Valid types: NONE, MYSQL, MARIADB, H2, SQLITE
   #
   # MYSQL or MARIADB are only needed if you want to sync the player's size through multiple servers,
-  # otherwise I recommend leaving it at NONE
+  # otherwise I recommend leaving it at H2 or SQLITE (you can also leave it as NONE, but then if a player
+  # logs out and rejoins your server their size will be set back to default: 1.0)
   #
   # NONE just stores the data directly into the player - it doesn't require any additional setup
   type: NONE
@@ -118,4 +119,4 @@ purchase-logging:
   file-name: "logs.txt"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
-config-version: 3
+config-version: 4
