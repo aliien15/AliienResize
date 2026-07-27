@@ -1,8 +1,9 @@
-name: AliienResize
+name: com.aliiensmp.aliienResize.AliienResize
 version: '${project.version}'
-main: AliienResize
+main: com.aliiensmp.aliienResize.AliienResize
 api-version: '1.21'
 softdepend: [Vault, PlaceholderAPI, PlayerPoints, UltraEconomy, CoinsEngine, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy]
+folia-supported: true
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.10
@@ -13,12 +14,12 @@ libraries:
 
 commands:
   resize:
-    description: Main command for AliienResize.
+    description: Main command for com.aliiensmp.aliienResize.AliienResize.
     aliases: [resize]
 
 permissions:
   aliien.resize.*:
-    description: Grants access to all AliienResize player and admin permissions.
+    description: Grants access to all com.aliiensmp.aliienResize.AliienResize player and admin permissions.
     default: op
     children:
       aliien.resize.use: true

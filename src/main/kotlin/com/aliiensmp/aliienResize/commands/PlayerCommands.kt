@@ -1,7 +1,7 @@
 package com.aliiensmp.aliienResize.commands
 
 import co.aikar.commands.annotation.*
-import AliienResize
+import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode

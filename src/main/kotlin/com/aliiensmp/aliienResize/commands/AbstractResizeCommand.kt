@@ -1,7 +1,7 @@
 package com.aliiensmp.aliienResize.commands
 
 import co.aikar.commands.BaseCommand
-import AliienResize
+import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.listeners.PlayerConnectionListener
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player

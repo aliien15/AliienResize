@@ -1,5 +1,5 @@
 # =======================================================
-# AliienResize - Messages
+# com.aliiensmp.aliienResize.AliienResize - Messages
 # =======================================================
 messages:
   prefix: "<green><bold>RESIZE</bold></green> <dark_gray>»</dark_gray> "
@@ -11,7 +11,7 @@ messages:
   reload:
     reloading: "&eReloading configurations..."
     success: "&aAliienResize has been successfully reloaded!"
-    fail: "&cThere was an internal error while trying to reload AliienResize!"
+    fail: "&cThere was an internal error while trying to reload com.aliiensmp.aliienResize.AliienResize!"
   purchase:
     success: "&aYou have successfully purchased this size for %price% %suffix%!"
     currency-unavailable: "&cThis currency is currently unavailable (this might be a misconfiguration bug)"
@@ -27,7 +27,7 @@ messages:
     world-change: "&cYou have entered a blacklisted world, so your size has bene set back to 1.0x"
     in-blacklisted-world: "&cYou cannot resize yourself here!"
   updates:
-    new-version: "&aA new AliienResize version is now available!"
+    new-version: "&aA new com.aliiensmp.aliienResize.AliienResize version is now available!"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
 config-version: 1

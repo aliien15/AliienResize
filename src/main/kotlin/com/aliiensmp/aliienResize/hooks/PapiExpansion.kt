@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.hooks
 
-import AliienResize
+import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Sizes
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer

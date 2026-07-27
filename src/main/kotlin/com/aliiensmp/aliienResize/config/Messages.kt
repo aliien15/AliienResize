@@ -26,7 +26,7 @@ object Messages {
     var RELOAD_SUCCESS: String = "&aAliienResize has been successfully reloaded!"
 
     @Key("messages.reload.fail")
-    var RELOAD_FAIL: String = "&cThere was an internal error while trying to reload AliienResize!"
+    var RELOAD_FAIL: String = "&cThere was an internal error while trying to reload com.aliiensmp.aliienResize.AliienResize!"
 
     @Key("messages.purchase.success")
     var PURCHASE_SUCCESS: String = "&aYou have successfully purchased this size for %price%$!"
@@ -41,7 +41,7 @@ object Messages {
     var NO_PERM: String = "&cYou do not have permission to do this!"
 
     @Key("messages.updates.new-version")
-    var NEW_VERSION: String = "<green>A new AliienResize version is now available!"
+    var NEW_VERSION: String = "<green>A new com.aliiensmp.aliienResize.AliienResize version is now available!"
 
     @Key("messages.force-set.player")
     var FORCE_SET_PLAYER: String = "&aYour size was updated by an admin!"

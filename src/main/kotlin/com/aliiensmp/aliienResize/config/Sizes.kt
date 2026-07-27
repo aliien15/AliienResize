@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.config
 
-import AliienResize
+import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.data.*
 import com.aliiensmp.aliienResize.menus.MenuAction
 import com.aliiensmp.core.config.Key

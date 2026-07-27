@@ -1,3 +1,5 @@
+package com.aliiensmp.aliienResize
+
 import co.aikar.commands.InvalidCommandArgument
 import co.aikar.commands.MessageKeys
 import co.aikar.commands.PaperCommandManager
