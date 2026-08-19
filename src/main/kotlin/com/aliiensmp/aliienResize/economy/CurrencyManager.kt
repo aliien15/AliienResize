@@ -3,6 +3,7 @@ package com.aliiensmp.aliienResize.economy
 import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.economy.currencyOptions.*
 import org.bukkit.Bukkit
+import java.util.Locale
 
 class CurrencyManager(private val plugin: AliienResize) {
 
@@ -243,7 +244,7 @@ class CurrencyManager(private val plugin: AliienResize) {
 
     private fun isPluginEnabled(pluginName: String) = Bukkit.getPluginManager().getPlugin(pluginName) != null
 
-    private fun normalizeIdentifier(identifier: String) = identifier.uppercase()
+    private fun normalizeIdentifier(identifier: String) = identifier.uppercase(Locale.ROOT)
 
     private fun getDynamicSuffix(identifier: String, normalizedIdentifier: String): String {
         if (normalizedIdentifier.startsWith("CUSTOM_")) {

@@ -175,7 +175,7 @@ object Sizes {
     }
 
     private fun cacheSizeEntry(entry: ParsedSizeEntry) {
-        SIZES_BY_ID[entry.node.id] = entry.node
+        SIZES_BY_ID[entry.node.id.lowercase(Locale.ROOT)] = entry.node
         SIZE_ITEMS_BY_PAGE.computeIfAbsent(entry.page) { mutableListOf() }.add(entry.cachedItem)
         MENU_MAX_PAGE = maxOf(MENU_MAX_PAGE, entry.page)
     }

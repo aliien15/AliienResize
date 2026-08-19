@@ -126,7 +126,7 @@ class AliienResize : JavaPlugin() {
             }
             "NONE" -> None()
             "H2" -> {
-                AliienCore.getDatabase().connectH2(this, "databse")
+                AliienCore.getDatabase().connectH2(this, "database")
                 H2()
             }
             "SQLITE" -> {
@@ -161,7 +161,7 @@ class AliienResize : JavaPlugin() {
             val sizeId = c.popFirstArg()
             val player = c.player
 
-            val sizeNode = Sizes.SIZES_BY_ID.values.firstOrNull { it.id.equals(sizeId, ignoreCase = true) }
+            val sizeNode = Sizes.SIZES_BY_ID[sizeId]
                 ?: run {
                     if (Settings.SOUNDS_ENABLED) player?.let { Settings.ERROR_SOUND?.play(it) }
                     throw InvalidCommandArgument(Messages.NULL_ID, false)
