@@ -63,4 +63,10 @@ object Messages {
 
     @Key("messages.blacklisted-world.in-blacklisted-world")
     var IN_BLACKLISTED_WORLD: String = "&cYou cannot resize yourself here!"
+
+    @Key("messages.debug.toggled-on")
+    var DEBUG_TOGGLED_ON: String = "&aYou have successfully toggled debug mode on!"
+
+    @Key("messages.debug.toggled-off")
+    var DEBUG_TOGGLED_OFF: String ="&aYou have successfully toggled debug mode off!"
 }

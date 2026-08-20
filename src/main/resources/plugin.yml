@@ -1,4 +1,4 @@
-name: com.aliiensmp.aliienResize.AliienResize
+name: AliienResize
 version: '${project.version}'
 main: com.aliiensmp.aliienResize.AliienResize
 api-version: '1.21'
@@ -14,12 +14,12 @@ libraries:
 
 commands:
   resize:
-    description: Main command for com.aliiensmp.aliienResize.AliienResize.
+    description: Main command for AliienResize.
     aliases: [resize]
 
 permissions:
   aliien.resize.*:
-    description: Grants access to all com.aliiensmp.aliienResize.AliienResize player and admin permissions.
+    description: Grants access to all AliienResize player and admin permissions.
     default: op
     children:
       aliien.resize.use: true
@@ -35,6 +35,7 @@ permissions:
       aliien.resize.admin.set: true
       aliien.resize.admin.clear: true
       aliien.resize.admin.reload: true
+      aliien.resize.admin.debug: true
 
   # Individual player perms
   aliien.resize.menu:
@@ -79,4 +80,8 @@ permissions:
 
   aliien.resize.admin.reload:
     description: Allows an admin to reload the plugin configurations.
+    default: op
+
+  aliien.resize.admin.debug:
+    description: Allows an admin to toggle/set the debug mode.
     default: op

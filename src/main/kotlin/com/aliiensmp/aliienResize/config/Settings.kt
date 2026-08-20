@@ -9,6 +9,9 @@ import java.util.Locale
 
 object Settings {
 
+    @Key("debug-mode")
+    var DEBUG_MODE = false
+
     @Key("check-for-updates")
     var CHECK_FOR_UPDATES = true
 

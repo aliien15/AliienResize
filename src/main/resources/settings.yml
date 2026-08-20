@@ -1,6 +1,9 @@
 # =======================================================
-# com.aliiensmp.aliienResize.AliienResize - Messages
+# AliienResize - Settings
 # =======================================================
+
+# I may ask you to enable this to help me figure out bugs and things like that, otherwise keep this disabled to avoid console spam
+debug-mode: false
 
 # Used to store the plugin data
 database:
@@ -119,4 +122,4 @@ purchase-logging:
   file-name: "logs.txt"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
-config-version: 4
+config-version: 5

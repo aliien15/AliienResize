@@ -72,7 +72,11 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     }
 
     private fun canUseInWorld(player: Player): Boolean {
-        if (!player.hasPermission("aliien.resize.bypass.worldblacklist") && Settings.BLACKLISTED_WORLDS.contains(player.world.name)) {
+        val isBlacklistedWorld = Settings.BLACKLISTED_WORLDS.any {
+            it.equals(player.world.name, ignoreCase = true)
+        }
+
+        if (isBlacklistedWorld && !player.hasPermission("aliien.resize.bypass.worldblacklist")) {
             MessageUtils.send(player, Messages.PREFIX, Messages.IN_BLACKLISTED_WORLD)
             if (Settings.SOUNDS_ENABLED)
                 Settings.ERROR_SOUND?.play(player)

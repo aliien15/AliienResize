@@ -10,6 +10,7 @@ import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.Sizes
 import com.aliiensmp.aliienResize.config.data.SizeNode
+import com.aliiensmp.aliienResize.data.PlayerDataService
 import com.aliiensmp.aliienResize.database.DatabaseProvider
 import com.aliiensmp.aliienResize.database.options.H2
 import com.aliiensmp.aliienResize.database.options.MariaDB
@@ -25,6 +26,7 @@ import com.aliiensmp.core.AliienCore
 import com.aliiensmp.core.config.ConfigManager
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument
 import com.aliiensmp.core.utils.ColorUtils
+import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import com.aliiensmp.core.utils.updatechecker.UpdateChecker
 import com.aliiensmp.core.utils.updatechecker.UpdateNotifyListener
@@ -55,20 +57,29 @@ class AliienResize : JavaPlugin() {
     lateinit var databaseProvider: DatabaseProvider
         private set
 
+    lateinit var playerDataService: PlayerDataService
+        private set
+
     companion object {
         private const val GIST = "https://gist.githubusercontent.com/aliien15/ecb083083130349214c79c53f73913fa/raw/AliienResize-version.txt"
     }
 
     override fun onEnable() {
         AliienCore.init(this)
+        DebugUtils.send("AliienCore initialized, starting AliienResize startup sequence.")
 
         vaultExpansion = VaultExpansion(this)
         if (!loadConfigurations()) {
+            DebugUtils.send(Level.SEVERE, "Failed to load configurations. Disabling plugin.")
             server.pluginManager.disablePlugin(this)
             return
         }
 
         setupDatabase()
+
+        playerDataService = PlayerDataService(this)
+        DebugUtils.send("PlayerDataService initialized.")
+
         setupCommands()
         setupListeners()
 
@@ -77,25 +88,40 @@ class AliienResize : JavaPlugin() {
         setupBstats()
 
         logger.info("AliienResize enabled successfully!")
+        DebugUtils.send("AliienResize startup sequence completed.")
     }
 
     override fun onDisable() {
+        DebugUtils.send("AliienResize disable sequence initiated. Saving all online players...")
+        if (::playerDataService.isInitialized) {
+            server.onlinePlayers.forEach { player ->
+                playerDataService.savePlayer(player.uniqueId)
+            }
+            playerDataService.clearCache()
+            DebugUtils.send("All online player data saved and cache cleared.")
+        }
+
         logger.info("AliienResize disabled!")
     }
 
     private fun setupListeners() {
+        DebugUtils.send("Registering Bukkit listeners.")
         server.pluginManager.registerEvents(WorldListener(this), this)
-        server.pluginManager.registerEvents(PlayerConnectionListener(this), this)
+        server.pluginManager.registerEvents(PlayerConnectionListener(this, playerDataService), this)
     }
 
     private fun setupPapiHook() {
         if (Settings.HOOK_PAPI && server.pluginManager.getPlugin("PlaceholderAPI") != null) {
             PapiExpansion(this).register()
+            DebugUtils.send("PlaceholderAPI hook registered.")
         }
     }
 
     private fun setupDatabase() {
-        databaseProvider = when (settingsFile.getString("database.type").uppercase(Locale.ROOT)) {
+        val dbType = settingsFile.getString("database.type", "NONE").uppercase(Locale.ROOT)
+        DebugUtils.send("Setting up database with provider type: $dbType")
+
+        databaseProvider = when (dbType) {
             "MYSQL" -> {
                 AliienCore.getDatabase().connectMySQL(
                     settingsFile.getString("database.settings.host", "localhost"),
@@ -134,15 +160,17 @@ class AliienResize : JavaPlugin() {
                 SQLite()
             }
             else -> {
-                logger.warning("Invalid database type detected, therefore defaulting to NONE. If you are sure that you have typed your storage type correctly and this message is showing up, then this is a bug and must be reported!")
+                logger.warning("Invalid database type detected, therefore defaulting to NONE.")
                 None()
             }
         }
 
         databaseProvider.init()
+        DebugUtils.send("Database provider initialized successfully.")
     }
 
     private fun setupCommands() {
+        DebugUtils.send("Setting up PaperCommandManager.")
         val commandManager = PaperCommandManager(this)
 
         commandManager.locales.addMessage(Locale.ENGLISH, MessageKeys.ERROR_PREFIX, Messages.PREFIX)
@@ -172,36 +200,48 @@ class AliienResize : JavaPlugin() {
 
         commandManager.registerCommand(PlayerCommands(this))
         commandManager.registerCommand(AdminCommands(this))
+        DebugUtils.send("Commands registered.")
     }
 
     private fun setupBstats() {
         val metric = Metrics(this, 31229)
+        DebugUtils.send("bStats metrics initialized.")
     }
 
     private fun loadConfigurations(): Boolean {
+        DebugUtils.send("Loading configuration files...")
         return try {
             messagesFile = ConfigManager.loadConfig(this, "messages.yml")
             ConfigManager.bindConfig(messagesFile, Messages)
+            DebugUtils.send("Loading messages config file successfully.")
 
             mainMenuFile = ConfigManager.loadConfig(this, "main-menu.yml")
             ConfigManager.bindConfig(mainMenuFile, Sizes)
+            DebugUtils.send("Loading main-menu config file successfully.")
 
             settingsFile = ConfigManager.loadConfig(this, "settings.yml")
             ConfigManager.bindConfig(settingsFile, Settings)
             Settings.loadDynamicData(settingsFile)
+            DebugUtils.setDebug(Settings.DEBUG_MODE)
+            DebugUtils.send("Loading settings config file successfully.")
 
             currencyManager = CurrencyManager(this)
             currencyManager.loadCurrencies()
+            DebugUtils.send("Loading currencies successfully.")
 
             sizesFile = ConfigManager.loadConfig(this, "sizes.yml")
             Sizes.loadFromConfigs(sizesFile, mainMenuFile, this)
+            DebugUtils.send("Loading sizes config file successfully.")
 
             confirmationMenuFile = ConfigManager.loadConfig(this, "confirmation-menu.yml")
             ConfigManager.bindConfig(confirmationMenuFile, Confirmation)
             Confirmation.loadFromConfig(confirmationMenuFile, this)
+            DebugUtils.send("Loading confirmation-menu config file successfully.")
 
+            DebugUtils.send("All configurations loaded and bound successfully.")
             true
         } catch (e: Exception) {
+            DebugUtils.send(Level.SEVERE, "Configuration load failed: ${e.message}")
             logger.log(Level.SEVERE, "Failed to load or update configuration files!", e)
             false
         }
@@ -229,6 +269,7 @@ class AliienResize : JavaPlugin() {
     }
 
     fun reloadConfigurations(sender: CommandSender) {
+        DebugUtils.send("Configuration reload triggered by ${sender.name}.")
         currencyManager.loadCurrencies()
 
         CompletableFuture.runAsync {
@@ -237,8 +278,10 @@ class AliienResize : JavaPlugin() {
             val task = Runnable {
                 if (success) {
                     MessageUtils.send(sender, Messages.PREFIX, Messages.RELOAD_SUCCESS)
+                    DebugUtils.send("Configuration reload completed successfully.")
                 } else {
                     MessageUtils.send(sender, Messages.PREFIX, Messages.RELOAD_FAIL)
+                    DebugUtils.send(Level.SEVERE, "Configuration reload failed.")
                 }
             }
 

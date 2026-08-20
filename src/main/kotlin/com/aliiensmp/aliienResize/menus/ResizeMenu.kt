@@ -8,14 +8,12 @@ import com.aliiensmp.aliienResize.config.data.CachedActionItem
 import com.aliiensmp.aliienResize.config.data.CachedSizeItem
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.economy.CurrencyProvider
-import com.aliiensmp.aliienResize.listeners.PlayerConnectionListener
 import com.aliiensmp.aliienResize.utils.ResizeUtils
 import com.aliiensmp.core.menu.AliienGUI
 import com.aliiensmp.core.menu.ClickableItem
+import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask
 import org.bukkit.Bukkit
-import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.logging.Level
@@ -27,7 +25,9 @@ class ResizeMenu(private val plugin: AliienResize) {
 
     fun openMenu(player: Player, requestedPage: Int) {
         val page = sanitizePage(requestedPage)
-        val currentPlayerScale = player.getAttribute(Attribute.GENERIC_SCALE)?.value ?: 1.0
+        DebugUtils.send("Constructing ResizeMenu (Page: $page) for ${player.name}")
+
+        val currentPlayerScale = plugin.playerDataService.getPlayerData(player.uniqueId).scale
         val gui = AliienGUI(Sizes.MENU_TITLE, Sizes.MENU_ROWS)
 
         populateSizes(gui, player, currentPlayerScale, page)
@@ -61,6 +61,7 @@ class ResizeMenu(private val plugin: AliienResize) {
     }
 
     private fun handleActionClick(player: Player, cachedItem: CachedActionItem) {
+        DebugUtils.send("Player ${player.name} clicked ActionItem: ${cachedItem.action}")
         when (cachedItem.action) {
             MenuAction.NEXT_PAGE, MenuAction.PREVIOUS_PAGE -> {
                 if (Settings.SOUNDS_ENABLED) Settings.CLICK_SOUND!!.play(player)
@@ -71,6 +72,7 @@ class ResizeMenu(private val plugin: AliienResize) {
                 player.closeInventory()
 
                 if (!ResizeUtils.hasEnoughSpace(player, 1.0)) {
+                    DebugUtils.send("Player ${player.name} failed clear condition: Blocked by space.")
                     MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
 
                     if (Settings.SOUNDS_ENABLED)
@@ -79,12 +81,8 @@ class ResizeMenu(private val plugin: AliienResize) {
                     return
                 }
 
-                player.runSync {
-                    player.getAttribute(Attribute.GENERIC_SCALE)?.let { attribute ->
-                        attribute.baseValue = 1.0
-                        PlayerConnectionListener.cache[player.uniqueId] = 1.0
-                    }
-
+                val playerData = plugin.playerDataService.getPlayerData(player.uniqueId)
+                playerData.resetScale(plugin) {
                     MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_DEFAULT)
                     if (Settings.SOUNDS_ENABLED) Settings.CLEAR_SOUND!!.play(player)
                 }
@@ -95,12 +93,14 @@ class ResizeMenu(private val plugin: AliienResize) {
     }
 
     private fun handleSizeClick(player: Player, sizeNode: SizeNode, currentPage: Int, confirmationItem: ItemStack) {
+        DebugUtils.send("Player ${player.name} clicked SizeNode: ${sizeNode.id}")
         if (hasPermission(player, sizeNode.permission)) {
             player.applyScale(sizeNode)
             return
         }
 
         if (sizeNode.price.isPurchasable) {
+            DebugUtils.send("Size ${sizeNode.id} is purchasable. Processing logic for ${player.name}")
             if (Settings.CONFIRMATION_MENU_ENABLED) {
                 ConfirmationMenu().openMenu(player, sizeNode, confirmationItem, { handlePurchase(player, sizeNode)}, { openMenu(player, currentPage)} )
             } else {
@@ -109,11 +109,13 @@ class ResizeMenu(private val plugin: AliienResize) {
             return
         }
 
+        DebugUtils.send("Player ${player.name} denied access to ${sizeNode.id}: No Permission")
         MessageUtils.send(player, Messages.PREFIX, Messages.NO_PERM)
     }
 
     private fun Player.applyScale(sizeNode: SizeNode) {
         if (!ResizeUtils.hasEnoughSpace(this, sizeNode.scale)) {
+            DebugUtils.send("Player ${this.name} failed to resize to ${sizeNode.id}: Not enough space.")
             MessageUtils.send(this, Messages.PREFIX, Messages.RESIZE_FAIL)
 
             if (Settings.SOUNDS_ENABLED)
@@ -124,13 +126,8 @@ class ResizeMenu(private val plugin: AliienResize) {
 
         this.closeInventory()
 
-        this.runSync {
-            this.getAttribute(Attribute.GENERIC_SCALE)?.let {
-                it.baseValue = sizeNode.scale
-            }
-
-            PlayerConnectionListener.cache[this.uniqueId] = sizeNode.scale
-
+        val playerData = plugin.playerDataService.getPlayerData(this.uniqueId)
+        playerData.applyScale(plugin, sizeNode.scale) {
             MessageUtils.send(this, Messages.PREFIX, Messages.RESIZE_SUCCESS)
             if (Settings.SOUNDS_ENABLED)
                 Settings.SUCCESS_SOUND?.play(this)
@@ -138,7 +135,9 @@ class ResizeMenu(private val plugin: AliienResize) {
     }
 
     private fun handlePurchase(player: Player, sizeNode: SizeNode) {
+        DebugUtils.send("Initiating purchase transaction for ${player.name} (Size: ${sizeNode.id})")
         if (!plugin.vaultExpansion.hasPermissions) {
+            DebugUtils.send(Level.SEVERE, "Purchase transaction failed: Vault permissions provider not found.")
             plugin.logger.log(
                 Level.SEVERE,
                 "Sizes purchase cancelled due to not finding any Vault permissions provider."
@@ -162,6 +161,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         val currency: CurrencyProvider? = plugin.currencyManager.getCurrency(sizeNode.price.currency)
 
         if (currency == null || !currency.isValid) {
+            DebugUtils.send(Level.SEVERE, "Purchase transaction failed: Invalid currency provider (${sizeNode.price.currency})")
             if (Settings.SOUNDS_ENABLED)
                 Settings.ERROR_SOUND?.play(player)
             MessageUtils.send(player, Messages.PREFIX, Messages.PURCHASE_UNAVAILABLE)
@@ -173,6 +173,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         val suffixText = plugin.currencyManager.getSuffix(sizeNode.price.currency)
 
         if (!currency.hasBalance(player, price)) {
+            DebugUtils.send("Purchase transaction failed for ${player.name}: Insufficient funds.")
             if (Settings.SOUNDS_ENABLED)
                 Settings.ERROR_SOUND!!.play(player)
 
@@ -185,6 +186,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         }
 
         if (!currency.withdraw(player, price)) {
+            DebugUtils.send(Level.SEVERE, "Purchase transaction failed for ${player.name}: Withdraw error.")
             if (Settings.SOUNDS_ENABLED)
                 Settings.ERROR_SOUND!!.play(player)
 
@@ -192,6 +194,7 @@ class ResizeMenu(private val plugin: AliienResize) {
             return
         }
 
+        DebugUtils.send("Purchase transaction successful for ${player.name} (Size: ${sizeNode.id}). Granting permissions and applying scale.")
         player.grantPermission(sizeNode.permission)
         player.applyScale(sizeNode)
 
@@ -215,10 +218,6 @@ class ResizeMenu(private val plugin: AliienResize) {
 
     private fun hasPermission(player: Player, permission: String?): Boolean {
         return (permission.isNullOrBlank() || player.hasPermission(permission))
-    }
-
-    private fun Player.runSync(task: Runnable) {
-        this.scheduler.run(plugin, { _: ScheduledTask? -> task.run() }, null)
     }
 
     private fun Player.grantPermission(permission: String) {

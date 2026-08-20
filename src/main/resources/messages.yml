@@ -28,6 +28,9 @@ messages:
     in-blacklisted-world: "&cYou cannot resize yourself here!"
   updates:
     new-version: "&aA new com.aliiensmp.aliienResize.AliienResize version is now available!"
+  debug:
+    toggled-on: "&aYou have successfully toggled debug mode on!"
+    toggled-off: "&aYou have successfully toggled debug mode off!"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
-config-version: 1
+config-version: 2

@@ -6,9 +6,11 @@ import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.utils.ResizeUtils
+import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 @CommandAlias("resize")
 class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
@@ -58,6 +60,38 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
             if (Settings.SOUNDS_ENABLED) {
                 if (sender is Player) Settings.CLEAR_SOUND?.play(sender)
                 if (target != sender) Settings.CLEAR_SOUND?.play(target)
+            }
+        }
+    }
+
+    @Subcommand("admin debug")
+    @CommandPermission("aliien.resize.admin.debug")
+    fun setDebug(sender: CommandSender) {
+        val newState = !Settings.DEBUG_MODE
+
+        CompletableFuture.runAsync {
+            try {
+                plugin.settingsFile.set("debug-mode", newState)
+                plugin.settingsFile.save()
+
+                plugin.reloadConfigurations(sender)
+
+                val task = Runnable {
+                    val message = if (newState) Messages.DEBUG_TOGGLED_ON else Messages.DEBUG_TOGGLED_OFF
+                    MessageUtils.send(sender, Messages.PREFIX, message)
+                    if (Settings.SOUNDS_ENABLED && sender is Player) {
+                        Settings.SUCCESS_SOUND?.play(sender)
+                    }
+                }
+
+                if (sender is Player) {
+                    sender.scheduler.run(plugin, { _ -> task.run() }, null)
+                } else {
+                    plugin.server.globalRegionScheduler.run(plugin) { _ -> task.run() }
+                }
+
+            } catch (e: Exception) {
+                plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to save debug mode to settings.yml", e)
             }
         }
     }
