@@ -27,7 +27,7 @@ Whether you want to sell sizes through your server's economy, grant them as VIP 
 
 ## 📦 Requirements
 
-* **Server Software:** Paper, Purpur, Spigot or Folia (1.21+)
+* **Server Software:** Paper, Folia or any of their forks (1.21+)
 * **Soft-Dependencies:** Vault, PlaceholderAPI (For economies & placeholders) and any economy plugin you might want to you (check the documentation for available options)
 
 ## 🛠️ Installation

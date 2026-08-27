@@ -8,20 +8,20 @@ import java.util.concurrent.CompletableFuture
 
 class SQLite : DatabaseProvider {
 
-    override fun init() {
+    override fun init(): CompletableFuture<Boolean> {
         val query = "CREATE TABLE IF NOT EXISTS player_scales(" +
                 "player_uuid VARCHAR(36) NOT NULL," +
                 "scale_value DOUBLE NOT NULL," +
                 "PRIMARY KEY (player_uuid)" +
                 ");"
 
-        AliienCore.getDatabase().executeAsync(query)
+        return AliienCore.getDatabase().executeAsync(query)
     }
 
-    override fun saveScale(playerUuid: UUID, scale: Double) {
+    override fun saveScale(playerUuid: UUID, scale: Double): CompletableFuture<Boolean> {
         val query = "INSERT OR REPLACE INTO player_scales(player_uuid, scale_value) VALUES (?, ?) "
 
-        AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale)
+        return AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale)
     }
 
     override fun loadScale(playerUuid: UUID): CompletableFuture<Double?> {

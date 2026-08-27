@@ -8,24 +8,24 @@ import java.util.concurrent.CompletableFuture
 
 class H2 : DatabaseProvider {
 
-    override fun init() {
+    override fun init(): CompletableFuture<Boolean> {
         val query = "CREATE TABLE IF NOT EXISTS player_scales(" +
                 "player_uuid VARCHAR(36) NOT NULL," +
                 "scale_value DOUBLE NOT NULL," +
                 "PRIMARY KEY (player_uuid)" +
                 ");"
 
-        AliienCore.getDatabase().executeAsync(query)
+        return AliienCore.getDatabase().executeAsync(query)
     }
 
-    override fun saveScale(playerUuid: UUID, scale: Double) {
+    override fun saveScale(playerUuid: UUID, scale: Double): CompletableFuture<Boolean> {
         val query = "MERGE INTO player_scales t " +
                 "USING (VALUES(?, ?)) AS s(player_uuid, scale_value) " +
                 "ON (t.player_uuid = s.player_uuid) " +
                 "WHEN MATCHED THEN UPDATE SET scale_value = s.scale_value " +
                 "WHEN NOT MATCHED THEN INSERT (player_uuid, scale_value) VALUES (s.player_uuid, s.scale_value);"
 
-        AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale)
+        return AliienCore.getDatabase().executeAsync(query, playerUuid.toString(), scale)
     }
 
     override fun loadScale(playerUuid: UUID): CompletableFuture<Double?> {

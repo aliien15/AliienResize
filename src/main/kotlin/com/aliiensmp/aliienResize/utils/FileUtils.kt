@@ -6,7 +6,6 @@ import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.config.Settings
 import org.bukkit.entity.Player
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
@@ -15,6 +14,7 @@ import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class FileUtils(private val plugin: AliienResize) {
@@ -43,7 +43,7 @@ class FileUtils(private val plugin: AliienResize) {
 
         try {
             writerExecutor.execute { writePurchaseLog(playerName, playerUuid, colorId, amountText, currencyId) }
-        } catch (ignored: RejectedExecutionException) {
+        } catch (_: RejectedExecutionException) {
             // The plugin is shutting down
         }
     }
@@ -53,6 +53,14 @@ class FileUtils(private val plugin: AliienResize) {
      */
     fun shutdown() {
         writerExecutor.shutdown()
+        try {
+            if (!writerExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                plugin.logger.warning("Timed out while flushing purchase logs.")
+            }
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
+            plugin.logger.log(Level.WARNING, "Interrupted while flushing purchase logs.", e)
+        }
     }
 
     /**
@@ -69,10 +77,9 @@ class FileUtils(private val plugin: AliienResize) {
             val timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT)
             val logMessage = "[$timestamp] Player $playerName ($playerUuid) purchased size '$sizeId' for $amountText $currencyId."
 
-            Files.writeString(
+            Files.write(
                 logFile,
-                logMessage + System.lineSeparator(),
-                StandardCharsets.UTF_8,
+                (logMessage + System.lineSeparator()).toByteArray(Charsets.UTF_8),
                 StandardOpenOption.CREATE,
                 StandardOpenOption.APPEND
             )

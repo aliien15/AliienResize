@@ -59,11 +59,11 @@ permissions:
 
   aliien.resize.bypass.worldblacklist:
     description: Allows the player to bypass world restrictions.
-    default: true
+    default: op
 
   aliien.resize.bypass.collisioncheck:
     description: Allows the player to bypass collision check restrictions.
-    default: true
+    default: op
 
   # Individual admin perms
   aliien.resize.admin:

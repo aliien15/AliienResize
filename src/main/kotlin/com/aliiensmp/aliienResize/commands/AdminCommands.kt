@@ -30,14 +30,14 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
         if (!force && !ResizeUtils.hasEnoughSpace(target, sizeNode.scale)) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.name))
-            if (Settings.SOUNDS_ENABLED && sender is Player) Settings.ERROR_SOUND?.play(sender)
+            if (sender is Player) Settings.ERROR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
             return
         }
 
         applyScale(target, sizeNode.scale) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.name).replace("%size_id%", sizeNode.id))
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeNode.id))
-            if (Settings.SOUNDS_ENABLED && sender is Player) Settings.SUCCESS_SOUND?.play(sender)
+            if (sender is Player) Settings.SUCCESS_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
         }
     }
 
@@ -49,7 +49,7 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
         if (!force && !ResizeUtils.hasEnoughSpace(target, 1.0)) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.name))
-            if (Settings.SOUNDS_ENABLED && sender is Player) Settings.ERROR_SOUND?.play(sender)
+            if (sender is Player) Settings.ERROR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
             return
         }
 
@@ -57,10 +57,8 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
             MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.name))
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER)
 
-            if (Settings.SOUNDS_ENABLED) {
-                if (sender is Player) Settings.CLEAR_SOUND?.play(sender)
-                if (target != sender) Settings.CLEAR_SOUND?.play(target)
-            }
+            if (sender is Player) Settings.CLEAR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
+            if (target != sender) Settings.CLEAR_SOUND?.play(target, Settings.SOUNDS_ENABLED)
         }
     }
 

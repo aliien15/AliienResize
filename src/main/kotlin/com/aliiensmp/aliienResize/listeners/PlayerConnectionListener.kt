@@ -16,7 +16,7 @@ class PlayerConnectionListener(
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         DebugUtils.send("PlayerJoinEvent fired for ${event.player.name}. Initiating data load.")
-        dataService.loadPlayer(event.player.uniqueId)
+        dataService.loadPlayer(event.player)
     }
 
     @EventHandler

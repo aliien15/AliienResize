@@ -5,12 +5,12 @@ import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 class None : DatabaseProvider {
-    override fun init() {
-        // Empty
+    override fun init(): CompletableFuture<Boolean> {
+        return CompletableFuture.completedFuture(true)
     }
 
-    override fun saveScale(playerUuid: UUID, scale: Double) {
-        // Empty
+    override fun saveScale(playerUuid: UUID, scale: Double): CompletableFuture<Boolean> {
+        return CompletableFuture.completedFuture(true)
     }
 
     override fun loadScale(playerUuid: UUID): CompletableFuture<Double?> {

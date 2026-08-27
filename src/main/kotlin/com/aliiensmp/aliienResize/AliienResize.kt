@@ -22,6 +22,7 @@ import com.aliiensmp.aliienResize.hooks.PapiExpansion
 import com.aliiensmp.aliienResize.hooks.VaultExpansion
 import com.aliiensmp.aliienResize.listeners.PlayerConnectionListener
 import com.aliiensmp.aliienResize.listeners.WorldListener
+import com.aliiensmp.aliienResize.utils.FileUtils
 import com.aliiensmp.core.AliienCore
 import com.aliiensmp.core.config.ConfigManager
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument
@@ -36,6 +37,7 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.Locale
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class AliienResize : JavaPlugin() {
@@ -57,7 +59,13 @@ class AliienResize : JavaPlugin() {
     lateinit var databaseProvider: DatabaseProvider
         private set
 
+    lateinit var databaseReady: CompletableFuture<Boolean>
+        private set
+
     lateinit var playerDataService: PlayerDataService
+        private set
+
+    lateinit var fileUtils: FileUtils
         private set
 
     companion object {
@@ -75,10 +83,13 @@ class AliienResize : JavaPlugin() {
             return
         }
 
-        setupDatabase()
+        databaseReady = setupDatabase()
 
         playerDataService = PlayerDataService(this)
         DebugUtils.send("PlayerDataService initialized.")
+
+        fileUtils = FileUtils(this)
+        DebugUtils.send("FileUtils initialized.")
 
         setupCommands()
         setupListeners()
@@ -94,11 +105,28 @@ class AliienResize : JavaPlugin() {
     override fun onDisable() {
         DebugUtils.send("AliienResize disable sequence initiated. Saving all online players...")
         if (::playerDataService.isInitialized) {
-            server.onlinePlayers.forEach { player ->
+            val saveTasks = server.onlinePlayers.map { player ->
                 playerDataService.savePlayer(player.uniqueId)
             }
+
+            val allSaved = try {
+                CompletableFuture.allOf(*saveTasks.toTypedArray()).get(5, TimeUnit.SECONDS)
+                saveTasks.all { it.getNow(false) }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Failed or timed out while saving player resize data during shutdown.", e)
+                false
+            }
+
             playerDataService.clearCache()
-            DebugUtils.send("All online player data saved and cache cleared.")
+            if (allSaved) {
+                DebugUtils.send("All online player data saved and cache cleared.")
+            } else {
+                DebugUtils.send(Level.WARNING, "Player data cache cleared after save flush failed or timed out.")
+            }
+        }
+
+        if (::fileUtils.isInitialized) {
+            fileUtils.shutdown()
         }
 
         logger.info("AliienResize disabled!")
@@ -117,7 +145,7 @@ class AliienResize : JavaPlugin() {
         }
     }
 
-    private fun setupDatabase() {
+    private fun setupDatabase(): CompletableFuture<Boolean> {
         val dbType = settingsFile.getString("database.type", "NONE").uppercase(Locale.ROOT)
         DebugUtils.send("Setting up database with provider type: $dbType")
 
@@ -165,8 +193,19 @@ class AliienResize : JavaPlugin() {
             }
         }
 
-        databaseProvider.init()
-        DebugUtils.send("Database provider initialized successfully.")
+        return databaseProvider.init()
+            .thenApply { success ->
+                if (success) {
+                    DebugUtils.send("Database provider initialized successfully.")
+                } else {
+                    logger.severe("Database provider failed to initialize.")
+                }
+
+                success
+            }.exceptionally { ex ->
+                logger.log(Level.SEVERE, "Database provider failed to initialize.", ex)
+                false
+            }
     }
 
     private fun setupCommands() {

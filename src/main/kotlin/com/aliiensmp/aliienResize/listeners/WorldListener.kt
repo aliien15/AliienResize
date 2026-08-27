@@ -27,10 +27,9 @@ class WorldListener(private val plugin: AliienResize) : Listener {
         }
 
         DebugUtils.send("Player ${player.name} entered blacklisted world $currentWorld without bypass. Forcing scale reset.")
-        val playerData = plugin.playerDataService.getPlayerData(player.uniqueId)
-        playerData.resetScale(plugin)
+        plugin.playerDataService.resetScale(player)
 
         MessageUtils.send(player, Messages.PREFIX, Messages.CHANGE_TO_BLACKLISTED_WORLD)
-        if (Settings.SOUNDS_ENABLED) Settings.ERROR_SOUND?.play(player)
+        Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
     }
 }

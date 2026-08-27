@@ -21,8 +21,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
         ResizeMenu(plugin).openMenu(player, 1)
 
-        if (Settings.SOUNDS_ENABLED)
-            Settings.SUCCESS_SOUND?.play(player)
+        Settings.SUCCESS_SOUND?.play(player, Settings.SOUNDS_ENABLED)
     }
 
     @Subcommand("set")
@@ -31,8 +30,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     fun resize(player: Player, sizeNode: SizeNode) {
         if (sizeNode.permission.isNotBlank() && !player.hasPermission(sizeNode.permission)) {
             MessageUtils.send(player, Messages.PREFIX, Messages.NO_PERM)
-            if (Settings.SOUNDS_ENABLED)
-                Settings.ERROR_SOUND?.play(player)
+            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
 
             return
         }
@@ -41,15 +39,14 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
         if (!ResizeUtils.hasEnoughSpace(player, sizeNode.scale)) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
-            if (Settings.SOUNDS_ENABLED)
-                Settings.ERROR_SOUND?.play(player)
+            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
 
             return
         }
 
         applyScale(player, sizeNode.scale) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS.replace("%size_id%", sizeNode.id))
-            if (Settings.SOUNDS_ENABLED) Settings.SUCCESS_SOUND?.play(player)
+            Settings.SUCCESS_SOUND?.play(player, Settings.SOUNDS_ENABLED)
         }
     }
 
@@ -58,16 +55,14 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     fun clearSize(player: Player) {
         if (!ResizeUtils.hasEnoughSpace(player, 1.0)) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
-            if (Settings.SOUNDS_ENABLED)
-                Settings.ERROR_SOUND?.play(player)
+            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
 
             return
         }
 
         applyScale(player, 1.0) {
             MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_DEFAULT)
-            if (Settings.SOUNDS_ENABLED)
-                Settings.CLEAR_SOUND?.play(player)
+            Settings.CLEAR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
         }
     }
 
@@ -78,8 +73,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
         if (isBlacklistedWorld && !player.hasPermission("aliien.resize.bypass.worldblacklist")) {
             MessageUtils.send(player, Messages.PREFIX, Messages.IN_BLACKLISTED_WORLD)
-            if (Settings.SOUNDS_ENABLED)
-                Settings.ERROR_SOUND?.play(player)
+            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
 
             return false
         }

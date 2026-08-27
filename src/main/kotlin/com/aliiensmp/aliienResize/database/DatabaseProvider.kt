@@ -8,12 +8,12 @@ interface DatabaseProvider {
     /**
      * Initializes the database
      */
-    fun init()
+    fun init(): CompletableFuture<Boolean>
 
     /**
      * Saves the new scale into the database
      */
-    fun saveScale(playerUuid: UUID, scale: Double)
+    fun saveScale(playerUuid: UUID, scale: Double): CompletableFuture<Boolean>
 
     /**
      * Returns the player's scale
