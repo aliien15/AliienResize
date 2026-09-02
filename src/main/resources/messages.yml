@@ -1,5 +1,5 @@
 # =======================================================
-# com.aliiensmp.aliienResize.AliienResize - Messages
+# AliienResize - Messages
 # =======================================================
 messages:
   prefix: "<green><bold>RESIZE</bold></green> <dark_gray>»</dark_gray> "
@@ -11,7 +11,7 @@ messages:
   reload:
     reloading: "&eReloading configurations..."
     success: "&aAliienResize has been successfully reloaded!"
-    fail: "&cThere was an internal error while trying to reload com.aliiensmp.aliienResize.AliienResize!"
+    fail: "&cThere was an internal error while trying to reload AliienResize!"
   purchase:
     success: "&aYou have successfully purchased this size for %price% %suffix%!"
     currency-unavailable: "&cThis currency is currently unavailable (this might be a misconfiguration bug)"
@@ -22,15 +22,19 @@ messages:
     admin: "&aSet %player%'s size to %size_id%!"
     default-player: "&aYour size was cleared by an admin!"
     default-admin: "&aCleared %player%'s size!"
+    scale-player: "&aYour size was updated by an admin to %scale%!"
+    scale-admin: "&aSet %player%'s size to %scale%!"
     not-enough-space: "&cNot enough space for %player% to resize!"
   blacklisted-world:
     world-change: "&cYou have entered a blacklisted world, so your size has bene set back to 1.0x"
     in-blacklisted-world: "&cYou cannot resize yourself here!"
+  scale:
+    not-in-limits: "&cThe size you are trying to pick has to be between %min% and %max%!"
   updates:
-    new-version: "&aA new com.aliiensmp.aliienResize.AliienResize version is now available!"
+    new-version: "&aA new AliienResize version is now available!"
   debug:
     toggled-on: "&aYou have successfully toggled debug mode on!"
     toggled-off: "&aYou have successfully toggled debug mode off!"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
-config-version: 2
+config-version: 3

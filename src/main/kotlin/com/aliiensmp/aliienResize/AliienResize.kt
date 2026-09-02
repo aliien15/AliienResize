@@ -73,7 +73,7 @@ class AliienResize : JavaPlugin() {
     }
 
     override fun onEnable() {
-        AliienCore.init(this)
+        AliienCore.init(this, true, true, false)
         DebugUtils.send("AliienCore initialized, starting AliienResize startup sequence.")
 
         vaultExpansion = VaultExpansion(this)
@@ -128,6 +128,8 @@ class AliienResize : JavaPlugin() {
         if (::fileUtils.isInitialized) {
             fileUtils.shutdown()
         }
+
+        AliienCore.shutdown()
 
         logger.info("AliienResize disabled!")
     }

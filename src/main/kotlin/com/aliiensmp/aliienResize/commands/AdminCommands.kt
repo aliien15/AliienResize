@@ -5,12 +5,12 @@ import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
-import com.aliiensmp.aliienResize.utils.ResizeUtils
 import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
+import java.util.logging.Level
 
 @CommandAlias("resize")
 class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
@@ -28,15 +28,11 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     fun resizePlayer(sender: CommandSender, @Flags("other") target: Player, sizeNode: SizeNode, @Optional flag: String?) {
         val force = flag.equals("-f", ignoreCase = true)
 
-        if (!force && !ResizeUtils.hasEnoughSpace(target, sizeNode.scale)) {
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.name))
-            if (sender is Player) Settings.ERROR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
-            return
-        }
+        if (!checkAdminSpace(sender, target, sizeNode.scale, force)) return
 
         applyScale(target, sizeNode.scale) {
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN.replace("%player%", target.name).replace("%size_id%", sizeNode.id))
-            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER.replace("%size_id%", sizeNode.id))
+            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_ADMIN, "%player%", target.name, "%size_id%", sizeNode.id)
+            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SET_PLAYER, "%size_id%", sizeNode.id)
             if (sender is Player) Settings.SUCCESS_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
         }
     }
@@ -47,15 +43,28 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     fun clearSize(sender: CommandSender, @Flags("other") target: Player, @Optional flag: String?) {
         val force = flag.equals("-f", ignoreCase = true)
 
-        if (!force && !ResizeUtils.hasEnoughSpace(target, 1.0)) {
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SET_FAIL.replace("%player%", target.name))
-            if (sender is Player) Settings.ERROR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
-            return
-        }
+        if (!checkAdminSpace(sender, target, 1.0, force)) return
 
         applyScale(target, 1.0) {
-            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN.replace("%player%", target.name))
+            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_CLEAR_ADMIN, "%player%", target.name)
             MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_CLEAR_PLAYER)
+
+            if (sender is Player) Settings.CLEAR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
+            if (target != sender) Settings.CLEAR_SOUND?.play(target, Settings.SOUNDS_ENABLED)
+        }
+    }
+
+    @Subcommand("admin scale")
+    @CommandPermission("aliien.resize.admin.scale")
+    @CommandCompletion("@players -f")
+    fun onScale(sender: CommandSender, @Flags("other") target: Player, newScale: Double, @Optional flag: String?) {
+        val force = flag.equals("-f", ignoreCase = true)
+
+        if (!checkAdminSpace(sender, target, newScale, force)) return
+
+        applyScale(target, newScale) {
+            MessageUtils.send(sender, Messages.PREFIX, Messages.FORCE_SCALE_ADMIN, "%player%", target.name, "%scale%", String.format("%.1f", newScale))
+            MessageUtils.send(target, Messages.PREFIX, Messages.FORCE_SCALE_PLAYER, "%scale%", String.format("%.1f", newScale))
 
             if (sender is Player) Settings.CLEAR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
             if (target != sender) Settings.CLEAR_SOUND?.play(target, Settings.SOUNDS_ENABLED)
@@ -65,7 +74,7 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     @Subcommand("admin debug")
     @CommandPermission("aliien.resize.admin.debug")
     fun setDebug(sender: CommandSender) {
-        val newState = !Settings.DEBUG_MODE
+        val newState = DebugUtils.toggleDebug()
 
         CompletableFuture.runAsync {
             try {
@@ -89,7 +98,7 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
                 }
 
             } catch (e: Exception) {
-                plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to save debug mode to settings.yml", e)
+                DebugUtils.send(Level.SEVERE, "Failed to save debug mode to settings.yml: %error%", "%error%", e.message ?: "Unknown error")
             }
         }
     }

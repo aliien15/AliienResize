@@ -55,6 +55,12 @@ object Messages {
     @Key("messages.force-set.default-admin")
     var FORCE_CLEAR_ADMIN: String = "&aCleared %player%'s size!"
 
+    @Key("messages.force-set.scale-player")
+    var FORCE_SCALE_PLAYER: String = "&aYour size was updated by an admin to %scale%!"
+
+    @Key("messages.force-set.scale-admin")
+    var FORCE_SCALE_ADMIN: String = "&aSet %player%'s size to %scale%!"
+
     @Key("messages.force-set.not-enough-space")
     var FORCE_SET_FAIL: String = "&cNot enough space for %player% to resize!"
 
@@ -68,5 +74,8 @@ object Messages {
     var DEBUG_TOGGLED_ON: String = "&aYou have successfully toggled debug mode on!"
 
     @Key("messages.debug.toggled-off")
-    var DEBUG_TOGGLED_OFF: String ="&aYou have successfully toggled debug mode off!"
+    var DEBUG_TOGGLED_OFF: String = "&aYou have successfully toggled debug mode off!"
+
+    @Key("messages.scale.not-in-limits")
+    var SCALE_NOT_IN_LIMITS: String = "&cThe size you are trying to pick has to be between %min% and %max%!"
 }

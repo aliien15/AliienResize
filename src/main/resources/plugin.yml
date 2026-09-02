@@ -36,6 +36,7 @@ permissions:
       aliien.resize.admin.clear: true
       aliien.resize.admin.reload: true
       aliien.resize.admin.debug: true
+      aliien.resize.admin.scale: true
 
   # Individual player perms
   aliien.resize.menu:
@@ -50,12 +51,17 @@ permissions:
     description: Allows the player to clear their active size.
     default: true
 
+  aliien.resize.scale:
+    description: Allows players to resize to whatever size they want within the limits defined.
+    default: op
+
   aliien.resize.bypass.*:
     description: Allows the player to bypass all restrictions.
     default: op
     children:
       aliien.resize.bypass.worldblacklist: true
       aliien.resize.bypass.collisioncheck: true
+      aliien.resize.bypass.scale-limits: true
 
   aliien.resize.bypass.worldblacklist:
     description: Allows the player to bypass world restrictions.
@@ -63,6 +69,10 @@ permissions:
 
   aliien.resize.bypass.collisioncheck:
     description: Allows the player to bypass collision check restrictions.
+    default: op
+
+  aliien.resize.bypass.scale-limits:
+    description: Allows players to resize to any size they want with the scale command
     default: op
 
   # Individual admin perms
@@ -84,4 +94,8 @@ permissions:
 
   aliien.resize.admin.debug:
     description: Allows an admin to toggle/set the debug mode.
+    default: op
+
+  aliien.resize.admin.scale:
+    description: Allows an admin to resize other players with a scale number.
     default: op

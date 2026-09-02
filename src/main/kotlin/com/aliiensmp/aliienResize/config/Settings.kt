@@ -42,6 +42,10 @@ object Settings {
     @Key("confirmation-menu.enabled")
     var CONFIRMATION_MENU_ENABLED = true
 
+    var SCALE_MIN = 0.5
+
+    var SCALE_MAX = 2.0
+
     val BLACKLISTED_WORLDS = mutableSetOf<String>()
     val CUSTOM_CURRENCIES = mutableMapOf<String, CustomCurrency>()
 
@@ -71,5 +75,11 @@ object Settings {
                 CUSTOM_CURRENCIES[currencyId.lowercase(Locale.ROOT)] = CustomCurrency(balancePlaceholder, withdrawCommand)
             }
         }
+
+        val minSetScaleValue = config.getDouble("scale.min", 0.5)
+        SCALE_MIN = if (minSetScaleValue == -1.0) 0.0 else minSetScaleValue
+
+        val maxSetScaleValue = config.getDouble("scale.max", 2.0)
+        SCALE_MAX = if (maxSetScaleValue == -1.0) Double.MAX_VALUE else maxSetScaleValue
     }
 }

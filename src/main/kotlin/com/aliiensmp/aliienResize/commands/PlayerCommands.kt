@@ -6,7 +6,7 @@ import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.menus.ResizeMenu
-import com.aliiensmp.aliienResize.utils.ResizeUtils
+import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.entity.Player
 
@@ -17,7 +17,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     @Subcommand("menu")
     @CommandPermission("aliien.resize.menu")
     fun openMenu(player: Player) {
-        if (!canUseInWorld(player)) return
+        if (cannotUseInWorld(player)) return
 
         ResizeMenu(plugin).openMenu(player, 1)
 
@@ -31,21 +31,15 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
         if (sizeNode.permission.isNotBlank() && !player.hasPermission(sizeNode.permission)) {
             MessageUtils.send(player, Messages.PREFIX, Messages.NO_PERM)
             Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
-
             return
         }
 
-        if (!canUseInWorld(player)) return
-
-        if (!ResizeUtils.hasEnoughSpace(player, sizeNode.scale)) {
-            MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
-            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
-
+        if (cannotUseInWorld(player) || doesNotHaveEnoughSpace(player, sizeNode.scale)) {
             return
         }
 
         applyScale(player, sizeNode.scale) {
-            MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS.replace("%size_id%", sizeNode.id))
+            MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS)
             Settings.SUCCESS_SOUND?.play(player, Settings.SOUNDS_ENABLED)
         }
     }
@@ -53,10 +47,7 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
     @Subcommand("clear")
     @CommandPermission("aliien.resize.clear")
     fun clearSize(player: Player) {
-        if (!ResizeUtils.hasEnoughSpace(player, 1.0)) {
-            MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_FAIL)
-            Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
-
+        if (cannotUseInWorld(player) || doesNotHaveEnoughSpace(player, 1.0)) {
             return
         }
 
@@ -66,17 +57,23 @@ class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
         }
     }
 
-    private fun canUseInWorld(player: Player): Boolean {
-        val isBlacklistedWorld = Settings.BLACKLISTED_WORLDS.any {
-            it.equals(player.world.name, ignoreCase = true)
-        }
-
-        if (isBlacklistedWorld && !player.hasPermission("aliien.resize.bypass.worldblacklist")) {
-            MessageUtils.send(player, Messages.PREFIX, Messages.IN_BLACKLISTED_WORLD)
+    @Subcommand("scale")
+    @CommandPermission("aliien.resize.scale")
+    fun onScale(player: Player, newScale: Double) {
+        if ((newScale < Settings.SCALE_MIN || newScale > Settings.SCALE_MAX) && !player.hasPermission("aliien.resize.bypass.scale-limits")) {
+            DebugUtils.send("Player ${player.name} could not resize themselves using the scale command due to the size being off of the limits set in settings.yml")
+            MessageUtils.send(player, Messages.PREFIX, Messages.SCALE_NOT_IN_LIMITS, "%min%", String.format("%.1f", Settings.SCALE_MIN), "%max%", String.format("%.1f", Settings.SCALE_MAX))
             Settings.ERROR_SOUND?.play(player, Settings.SOUNDS_ENABLED)
-
-            return false
+            return
         }
-        return true
+
+        if (cannotUseInWorld(player) || doesNotHaveEnoughSpace(player, newScale)) {
+            return
+        }
+
+        applyScale(player, newScale) {
+            MessageUtils.send(player, Messages.PREFIX, Messages.RESIZE_SUCCESS)
+            Settings.SUCCESS_SOUND?.play(player, Settings.SOUNDS_ENABLED)
+        }
     }
 }

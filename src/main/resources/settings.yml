@@ -121,5 +121,11 @@ purchase-logging:
   enabled: true
   file-name: "logs.txt"
 
+# Customize how small and big players can get with the scale command
+# To disable any of the limits, set it to -1.0
+scale:
+  min: 0.5
+  max: 2.0
+
 # DO NOT under any circumstance touch this unless you are told to by the official support
-config-version: 5
+config-version: 6
