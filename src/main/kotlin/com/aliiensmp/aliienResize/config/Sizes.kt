@@ -7,10 +7,13 @@ import com.aliiensmp.core.config.Key
 import com.aliiensmp.core.items.ItemBuilder
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument
 import com.aliiensmp.core.lib.boostedyaml.block.implementation.Section
+import com.aliiensmp.core.utils.DebugUtils
 import org.bukkit.Material
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.Locale
+import java.util.logging.Level
+import kotlin.math.ceil
 import kotlin.math.round
 
 object Sizes {
@@ -34,13 +37,13 @@ object Sizes {
     var MENU_DEFAULT_LORE_NO_PERM: List<String> = emptyList()
 
     val SIZES_BY_ID = linkedMapOf<String, SizeNode>()
-    val SIZE_ITEMS_BY_PAGE = linkedMapOf<Int, MutableList<CachedSizeItem>>()
+    val SIZE_MENU_ITEMS: MutableList<CachedSizeItem> = mutableListOf()
     val ACTION_ITEMS_BY_PAGE = linkedMapOf<Int, MutableList<CachedActionItem>>()
 
     var MENU_MAX_PAGE: Int = 1
         private set
 
-    private data class ParsedSizeEntry(val node: SizeNode, val cachedItem: CachedSizeItem, val page: Int)
+    private data class ParsedSizeEntry(val node: SizeNode, val cachedItem: CachedSizeItem)
     private data class RawActionItem(
         val action: MenuAction,
         val material: Material,
@@ -51,12 +54,9 @@ object Sizes {
         val flags: List<ItemFlag>
     )
 
-    /**
-     * Rebuilds the runtime cache
-     */
     fun loadFromConfigs(sizesConfig: YamlDocument, mainMenuConfig: YamlDocument, plugin: AliienResize) {
         SIZES_BY_ID.clear()
-        SIZE_ITEMS_BY_PAGE.clear()
+        SIZE_MENU_ITEMS.clear()
         ACTION_ITEMS_BY_PAGE.clear()
         MENU_MAX_PAGE = 1
 
@@ -70,17 +70,20 @@ object Sizes {
             section.getRoutesAsStrings(false)
                 .mapNotNull { rawKey -> parseSizeEntry(section.getSection(rawKey), rawKey, maxSlots, plugin) }
                 .forEach { cacheSizeEntry(it) }
-        } ?: plugin.logger.warning("No 'sizes' section found in sizes.yml.")
+        } ?: DebugUtils.send(Level.WARNING, "No 'sizes' section found in sizes.yml.")
+
+        // Calculate max pages
+        val slotsPerPage = SIZES_SLOTS.size.coerceAtLeast(1)
+        MENU_MAX_PAGE = ceil(SIZE_MENU_ITEMS.size.toDouble() / slotsPerPage).toInt().coerceAtLeast(1)
 
         // Parse action items
         mainMenuConfig.getSection("items")?.let { section ->
             section.getRoutesAsStrings(false)
                 .map { rawKey -> parseRawActionItem(section.getSection(rawKey), rawKey, plugin) }
                 .forEach { expandActionItem(it, maxSlots) }
-        } ?: plugin.logger.info("No action items found in main-menu.yml.")
+        } ?: DebugUtils.send(Level.WARNING,"No action items found in main-menu.yml.")
 
         // Sort lists
-        SIZE_ITEMS_BY_PAGE.values.forEach { items -> items.sortBy { it.slot } }
         ACTION_ITEMS_BY_PAGE.values.forEach { items -> items.sortBy { it.slot } }
 
         plugin.logger.info("Loaded ${SIZES_BY_ID.size} sizes across $MENU_MAX_PAGE page(s).")
@@ -88,21 +91,13 @@ object Sizes {
 
     private fun parseSizeEntry(section: Section, rawKey: String, maxSlots: Int, plugin: AliienResize): ParsedSizeEntry? {
         val id = rawKey.lowercase(Locale.ROOT)
-        val slot = section.getInt("gui.slot", 0)
-
-        if (slot !in 0..<maxSlots) {
-            plugin.logger.warning("Skipping size '$id': slot $slot is outside GUI bounds.")
-            return null
-        }
 
         val scale = section.getDouble("scale", 1.0)
         val permission = section.getString("permission", "")
-        val page = section.getInt("gui.page", 1).coerceAtLeast(1)
 
         val specificLore = section.getStringList("gui.lore") ?: emptyList()
         val specificNoPermLore = section.getStringList("gui.lore-without-perm") ?: emptyList()
 
-        // Fallbacks
         val rawLore = specificLore.ifEmpty { MENU_DEFAULT_LORE }
         val rawNoPermLore = specificNoPermLore.ifEmpty { MENU_DEFAULT_LORE_NO_PERM }
 
@@ -115,7 +110,6 @@ object Sizes {
         val currency = section.getString("price.currency", "VAULT")
         val amount = section.getDouble("price.amount", 0.0)
 
-        // String evaluations
         val priceText = if (round(amount) == amount) amount.toLong().toString() else amount.toString()
         val scaleText = scale.toString()
         val suffixText = if (purchasable) plugin.currencyManager.getSuffix(id) else ""
@@ -128,12 +122,12 @@ object Sizes {
         val selectedItem = buildItem(material, name, availableLore, modelData, flagsArray, true)
         val noPermItem = buildItem(MENU_LOCKED_MATERIAL, name, noPermLore, modelData, flagsArray, false)
 
-        val guiData = GuiData(material.name, slot, page, name, specificLore, specificNoPermLore, modelData, itemFlags)
+        val guiData = GuiData(material.name, name, specificLore, specificNoPermLore, modelData, itemFlags)
         val priceData = PriceData(purchasable, currency, amount)
         val sizeNode = SizeNode(id, scale, permission, guiData, priceData)
-        val cachedItem = CachedSizeItem(slot, id, permission, scale, availableItem, selectedItem, noPermItem)
+        val cachedItem = CachedSizeItem(id, permission, scale, availableItem, selectedItem, noPermItem)
 
-        return ParsedSizeEntry(sizeNode, cachedItem, page)
+        return ParsedSizeEntry(sizeNode, cachedItem)
     }
 
     private fun parseRawActionItem(section: Section, rawKey: String, plugin: AliienResize): RawActionItem {
@@ -179,8 +173,7 @@ object Sizes {
 
     private fun cacheSizeEntry(entry: ParsedSizeEntry) {
         SIZES_BY_ID[entry.node.id.lowercase(Locale.ROOT)] = entry.node
-        SIZE_ITEMS_BY_PAGE.computeIfAbsent(entry.page) { mutableListOf() }.add(entry.cachedItem)
-        MENU_MAX_PAGE = maxOf(MENU_MAX_PAGE, entry.page)
+        SIZE_MENU_ITEMS.add(entry.cachedItem)
     }
 
     private fun shouldDisplayOnPage(action: MenuAction, page: Int): Boolean = when (action) {
