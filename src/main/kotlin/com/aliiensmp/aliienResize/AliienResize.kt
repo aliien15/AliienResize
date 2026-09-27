@@ -10,13 +10,10 @@ import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.Sizes
 import com.aliiensmp.aliienResize.config.data.SizeNode
+import com.aliiensmp.aliienResize.converters.MenuLayoutConverter
 import com.aliiensmp.aliienResize.data.PlayerDataService
 import com.aliiensmp.aliienResize.database.DatabaseProvider
-import com.aliiensmp.aliienResize.database.options.H2
-import com.aliiensmp.aliienResize.database.options.MariaDB
-import com.aliiensmp.aliienResize.database.options.MySQL
-import com.aliiensmp.aliienResize.database.options.None
-import com.aliiensmp.aliienResize.database.options.SQLite
+import com.aliiensmp.aliienResize.database.options.*
 import com.aliiensmp.aliienResize.economy.CurrencyManager
 import com.aliiensmp.aliienResize.hooks.PapiExpansion
 import com.aliiensmp.aliienResize.hooks.VaultExpansion
@@ -35,7 +32,7 @@ import org.bstats.bukkit.Metrics
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -43,9 +40,12 @@ import java.util.logging.Level
 class AliienResize : JavaPlugin() {
 
     private lateinit var messagesFile: YamlDocument
-    private lateinit var sizesFile: YamlDocument
-    private lateinit var mainMenuFile: YamlDocument
     private lateinit var confirmationMenuFile: YamlDocument
+    lateinit var sizesFile: YamlDocument
+        private set
+
+    lateinit var mainMenuFile: YamlDocument
+        private set
 
     lateinit var settingsFile: YamlDocument
         private set
@@ -82,6 +82,7 @@ class AliienResize : JavaPlugin() {
             server.pluginManager.disablePlugin(this)
             return
         }
+        handleConfigConversion()
 
         databaseReady = setupDatabase()
 
@@ -132,6 +133,24 @@ class AliienResize : JavaPlugin() {
         AliienCore.shutdown()
 
         logger.info("AliienResize disabled!")
+    }
+
+    private fun handleConfigConversion() {
+        val menuLayoutConverter = MenuLayoutConverter(mainMenuFile, sizesFile)
+
+        if (!menuLayoutConverter.needsConverting()) {
+            DebugUtils.send("Menu layout convertion detected as not needed, therefore it is being skipped.")
+            return
+        }
+
+        DebugUtils.send("Initializing menu layout conversion (this was due to the 1.6.0 update, if you don't know what this is/does feel free to reach out with questions)")
+        menuLayoutConverter.convert().thenAccept { success ->
+            if (success) {
+                DebugUtils.send("Successfully converted your config from the old menu layout to the new layout")
+            } else {
+                DebugUtils.send(Level.WARNING, "Failed to convert config to the new layout. This is probably due to an error during the process")
+            }
+        }
     }
 
     private fun setupListeners() {

@@ -37,6 +37,7 @@ permissions:
       aliien.resize.admin.reload: true
       aliien.resize.admin.debug: true
       aliien.resize.admin.scale: true
+      aliien.resize.admin.clearconfig: true
 
   # Individual player perms
   aliien.resize.menu:
@@ -98,4 +99,8 @@ permissions:
 
   aliien.resize.admin.scale:
     description: Allows an admin to resize other players with a scale number.
+    default: op
+
+  aliien.resize.admin.clearconfig:
+    description: Clears up unnecessary keys in the config (that were only used in past updates)
     default: op

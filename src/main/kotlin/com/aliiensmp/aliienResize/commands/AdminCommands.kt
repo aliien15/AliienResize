@@ -1,14 +1,20 @@
 package com.aliiensmp.aliienResize.commands
 
 import co.aikar.commands.annotation.*
+import co.aikar.commands.annotation.CommandPermission
+import co.aikar.commands.annotation.Subcommand
 import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
+import com.aliiensmp.aliienResize.config.Sizes
 import com.aliiensmp.aliienResize.config.data.SizeNode
+import com.aliiensmp.aliienResize.converters.MenuLayoutConverter
+import com.aliiensmp.core.lib.boostedyaml.block.implementation.Section
 import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
 
@@ -101,5 +107,68 @@ class AdminCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
                 DebugUtils.send(Level.SEVERE, "Failed to save debug mode to settings.yml: %error%", "%error%", e.message ?: "Unknown error")
             }
         }
+    }
+
+    @Subcommand("admin clearconfig")
+    @CommandPermission("aliien.resize.admin.clearconfig")
+    fun onClearConfig(sender: CommandSender) {
+        if (!hasConvertedSizeSlots()) {
+            MessageUtils.send(sender, Messages.PREFIX, Messages.CLEARCONFIG_NEEDS_CONVERSION)
+            Settings.ERROR_SOUND?.play(sender, Settings.SOUNDS_ENABLED)
+            return
+        }
+
+        CompletableFuture.supplyAsync {
+            val sizeSection: Section = plugin.sizesFile.getSection("sizes") ?: return@supplyAsync false
+            if (sizeSection.isEmpty(false)) {
+                return@supplyAsync false
+            }
+
+            var changed = false
+            for (sizeId in sizeSection.getRoutesAsStrings(false)) {
+                val slotPath = "sizes.$sizeId.gui.slot"
+                val pagePath = "sizes.$sizeId.gui.page"
+
+                if (plugin.sizesFile.contains(slotPath)) {
+                    plugin.sizesFile.remove(slotPath)
+                    changed = true
+                }
+
+                if (plugin.sizesFile.contains(pagePath)) {
+                    plugin.sizesFile.remove(pagePath)
+                    changed = true
+                }
+            }
+
+            if (!changed) {
+                return@supplyAsync false
+            }
+
+            return@supplyAsync try {
+                plugin.sizesFile.save()
+                true
+            } catch (e: IOException) {
+                DebugUtils.send(Level.SEVERE, "There was an error while clearing old GUI slot/page settings: $e")
+                false
+            }
+        }.thenAccept { success ->
+            val message = if (success) Messages.CLEARCONFIG_SUCCESS else Messages.CLEARCONFIG_FAIL
+
+            if (sender is Player) {
+                MessageUtils.sendIfOnline(sender.uniqueId, Messages.PREFIX, message)
+            } else {
+                MessageUtils.send(sender, Messages.PREFIX, message)
+            }
+        }
+    }
+
+    private fun hasConvertedSizeSlots(): Boolean {
+        val sizeSlots = plugin.mainMenuFile.getIntList(MenuLayoutConverter.SIZE_SLOTS_PATH)
+        return sizeSlots?.any(::isValidGuiSlot) == true
+    }
+
+    private fun isValidGuiSlot(slot: Int): Boolean {
+        val maxSlots = maxOf(9, Sizes.MENU_ROWS * 9)
+        return slot in 0 until maxSlots
     }
 }

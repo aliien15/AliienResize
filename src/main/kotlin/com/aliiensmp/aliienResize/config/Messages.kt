@@ -78,4 +78,13 @@ object Messages {
 
     @Key("messages.scale.not-in-limits")
     var SCALE_NOT_IN_LIMITS: String = "&cThe size you are trying to pick has to be between %min% and %max%!"
+
+    @Key("messages.clearconfig.success")
+    var CLEARCONFIG_SUCCESS: String = "&aConfig has been successfully cleared!"
+
+    @Key("messages.clearconfig.success")
+    var CLEARCONFIG_NEEDS_CONVERSION: String = "&cYour config cannot be cleared, as it needs to be converted first (this is usually done when plugins are booting up, if you fail to get this done please contact the official support)"
+
+    @Key("messages.clearconfig.fail")
+    var CLEARCONFIG_FAIL: String = "&cFailed to convert config (there is either nothing to be cleared or there was an error in console)"
 }

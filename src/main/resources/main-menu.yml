@@ -1,10 +1,16 @@
 # =======================================================
-# com.aliiensmp.aliienResize.AliienResize - Main Menu
+# AliienResize - Main Menu
 # =======================================================
 menu-settings:
   title: "<dark_gray>Select your Size</dark_gray>"
   rows: 5
   locked-material: BARRIER
+  sizes-slots:
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
 
 items:
   filler_glass:

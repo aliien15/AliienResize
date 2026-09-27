@@ -35,6 +35,10 @@ messages:
   debug:
     toggled-on: "&aYou have successfully toggled debug mode on!"
     toggled-off: "&aYou have successfully toggled debug mode off!"
+  clearconfig:
+    success: "&aConfig has been successfully cleared!"
+    needs-conversion: "&cYour config cannot be cleared, as it needs to be converted first (this is usually done when plugins are booting up, if you fail to get this done please contact the official support)"
+    fail: "&cFailed to convert config (there is either nothing to be cleared or there was an error in console)"
 
 # DO NOT under any circumstance touch this unless you are told to by the official support
 config-version: 3

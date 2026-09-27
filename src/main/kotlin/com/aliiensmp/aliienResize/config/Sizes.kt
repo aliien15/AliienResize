@@ -24,6 +24,9 @@ object Sizes {
     @Key("menu-settings.locked-material")
     private var RAW_LOCKED_MATERIAL: String = "BARRIER"
 
+    @Key("menu-settings.sizes-slots")
+    var SIZES_SLOTS: List<Int> = listOf(20, 21, 22, 23, 24)
+
     val MENU_LOCKED_MATERIAL: Material
         get() = Material.matchMaterial(RAW_LOCKED_MATERIAL.uppercase(Locale.ROOT)) ?: Material.BARRIER
 
