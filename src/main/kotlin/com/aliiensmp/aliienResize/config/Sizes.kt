@@ -2,7 +2,7 @@ package com.aliiensmp.aliienResize.config
 
 import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.data.*
-import com.aliiensmp.aliienResize.menus.MenuAction
+import com.aliiensmp.aliienResize.menus.main.MenuAction
 import com.aliiensmp.core.config.Key
 import com.aliiensmp.core.items.ItemBuilder
 import com.aliiensmp.core.lib.boostedyaml.YamlDocument

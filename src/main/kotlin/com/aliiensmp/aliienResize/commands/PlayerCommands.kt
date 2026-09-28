@@ -5,7 +5,7 @@ import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
-import com.aliiensmp.aliienResize.menus.ResizeMenu
+import com.aliiensmp.aliienResize.menus.main.ResizeMenu
 import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.entity.Player

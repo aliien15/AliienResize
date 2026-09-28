@@ -1,4 +1,4 @@
-package com.aliiensmp.aliienResize.menus
+package com.aliiensmp.aliienResize.menus.confirmation
 
 enum class ConfirmationMenuAction {
     CONFIRM,

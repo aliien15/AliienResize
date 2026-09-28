@@ -17,7 +17,7 @@ items:
     action: "NONE"
     material: BLACK_STAINED_GLASS_PANE
     name: " "
-    slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 39, 41, 43, 44 ]
+    slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 37, 38, 40, 42, 43 ]
     lore: []
     model-data: 0
     item-flags: []
@@ -26,10 +26,21 @@ items:
     action: "CLEAR"
     material: BARRIER
     name: "<red><bold>Reset Size</bold></red>"
-    slots: [ 40 ]
+    slots: [ 39 ]
     lore:
       - "<gray>Click to reset your size</gray>"
       - "<gray>back to normal (1.0x).</gray>"
+    model-data: 0
+    item-flags: []
+
+  filter:
+    action: "FILTER"
+    material: NETHER_STAR
+    name: "<blue><bold>Filter</bold></blue> <dark_gray>(%filter%)</dark_gray>"
+    slots: [ 41 ]
+    lore:
+      - "<gray>Click to filter the displayed</gray>"
+      - "<gray>sizes to your preference.</gray>"
     model-data: 0
     item-flags: []
 
@@ -37,7 +48,7 @@ items:
     action: "PREVIOUS_PAGE"
     material: ARROW
     name: "<yellow><bold>Previous Page</bold></yellow>"
-    slots: [ 38 ]
+    slots: [ 36 ]
     lore:
       - "<gray>Go back to page %target_page%</gray>"
     model-data: 0
@@ -47,7 +58,7 @@ items:
     action: "NEXT_PAGE"
     material: ARROW
     name: "<yellow><bold>Next Page</bold></yellow>"
-    slots: [ 42 ]
+    slots: [ 44 ]
     lore:
       - "<gray>Go forward to page %target_page%</gray>"
     model-data: 0
