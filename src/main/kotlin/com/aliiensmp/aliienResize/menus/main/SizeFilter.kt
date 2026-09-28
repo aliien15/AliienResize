@@ -1,6 +1,6 @@
 package com.aliiensmp.aliienResize.menus.main
 
-enum class ColorFilter(val displayName: String) {
+enum class SizeFilter(val displayName: String) {
     ALL("All"),
     OWNED("Owned"),
     LOCKED("Locked"),
@@ -8,12 +8,12 @@ enum class ColorFilter(val displayName: String) {
     SMALL("Small"),
     BIG("Big");
 
-    fun getNext(): ColorFilter {
+    fun getNext(): SizeFilter {
         return entries[(this.ordinal + 1) % entries.size]
     }
 
     companion object {
-        fun fromString(text: String): ColorFilter {
+        fun fromString(text: String): SizeFilter {
             return entries.firstOrNull { it.name.equals(text, ignoreCase = true) } ?: ALL
         }
     }

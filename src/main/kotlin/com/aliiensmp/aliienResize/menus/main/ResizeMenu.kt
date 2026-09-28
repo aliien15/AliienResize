@@ -25,30 +25,30 @@ import kotlin.math.round
 class ResizeMenu(private val plugin: AliienResize) {
 
     fun openMenu(player: Player, requestedPage: Int) {
-        openMenu(player, requestedPage, ColorFilter.ALL)
+        openMenu(player, requestedPage, SizeFilter.ALL)
     }
 
-    fun openMenu(player: Player, requestedPage: Int, colorFilter: ColorFilter) {
+    fun openMenu(player: Player, requestedPage: Int, sizeFilter: SizeFilter) {
         val page = sanitizePage(requestedPage)
         DebugUtils.send("Constructing ResizeMenu (Page: $page) for ${player.name}")
 
         val currentPlayerScale = plugin.playerDataService.getPlayerData(player.uniqueId).scale
         val gui = AliienGUI(Sizes.MENU_TITLE, Sizes.MENU_ROWS)
-        val sizeItems = Sizes.SIZE_MENU_ITEMS.filter { item -> shouldDisplayItem(player, item, colorFilter) }
+        val sizeItems = Sizes.SIZE_MENU_ITEMS.filter { item -> shouldDisplayItem(player, item, sizeFilter) }
 
         populateSizes(gui, player, currentPlayerScale, page, sizeItems)
-        populateActionItems(gui, player, page, colorFilter)
+        populateActionItems(gui, player, page, sizeFilter)
         gui.open(player, page)
     }
 
-    private fun shouldDisplayItem(player: Player, item: CachedSizeItem, colorFilter: ColorFilter): Boolean {
-        return when (colorFilter) {
-            ColorFilter.ALL -> true
-            ColorFilter.OWNED -> player.hasPermission(item.permission)
-            ColorFilter.LOCKED -> !player.hasPermission(item.permission)
-            ColorFilter.PURCHASABLE -> Sizes.SIZES_BY_ID[item.id]?.price?.isPurchasable
-            ColorFilter.SMALL -> Sizes.SIZES_BY_ID[item.id]?.scale!! < 1.0
-            ColorFilter.BIG -> Sizes.SIZES_BY_ID[item.id]?.scale!! > 1.0
+    private fun shouldDisplayItem(player: Player, item: CachedSizeItem, sizeFilter: SizeFilter): Boolean {
+        return when (sizeFilter) {
+            SizeFilter.ALL -> true
+            SizeFilter.OWNED -> player.hasPermission(item.permission)
+            SizeFilter.LOCKED -> !player.hasPermission(item.permission)
+            SizeFilter.PURCHASABLE -> Sizes.SIZES_BY_ID[item.id]?.price?.isPurchasable
+            SizeFilter.SMALL -> Sizes.SIZES_BY_ID[item.id]?.scale!! < 1.0
+            SizeFilter.BIG -> Sizes.SIZES_BY_ID[item.id]?.scale!! > 1.0
         } == true
     }
 
@@ -69,7 +69,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         }
     }
 
-    private fun populateActionItems(gui: AliienGUI, player: Player, page: Int, colorFilter: ColorFilter) {
+    private fun populateActionItems(gui: AliienGUI, player: Player, page: Int, sizeFilter: SizeFilter) {
         Sizes.ACTION_ITEMS_BY_PAGE[page]?.forEach { cachedItem ->
             val item = cachedItem.item.clone()
             if (MenuAction.FILTER == cachedItem.action) {
@@ -78,7 +78,7 @@ class ResizeMenu(private val plugin: AliienResize) {
                         val currentName = displayName()
                         if (currentName != null) {
                             displayName(currentName.replaceText { builder ->
-                                builder.matchLiteral("%filter%").replacement(colorFilter.displayName)
+                                builder.matchLiteral("%filter%").replacement(sizeFilter.displayName)
                             })
                         }
                     }
@@ -88,7 +88,7 @@ class ResizeMenu(private val plugin: AliienResize) {
                         if (currentLore != null) {
                             lore(currentLore.map { line ->
                                 line.replaceText { builder ->
-                                    builder.matchLiteral("%filter%").replacement(colorFilter.displayName)
+                                    builder.matchLiteral("%filter%").replacement(sizeFilter.displayName)
                                 }
                             })
                         }
@@ -98,12 +98,12 @@ class ResizeMenu(private val plugin: AliienResize) {
             val clickableItem = if (MenuAction.NONE == cachedItem.action)
                 ClickableItem.empty(item)
             else
-                ClickableItem.of(item) { handleActionClick(player, cachedItem, page, colorFilter) }
+                ClickableItem.of(item) { handleActionClick(player, cachedItem, page, sizeFilter) }
             gui.setItem(cachedItem.slot, clickableItem)
         }
     }
 
-    private fun handleActionClick(player: Player, cachedItem: CachedActionItem, page: Int, colorFilter: ColorFilter) {
+    private fun handleActionClick(player: Player, cachedItem: CachedActionItem, page: Int, sizeFilter: SizeFilter) {
         DebugUtils.send("Player ${player.name} clicked ActionItem: ${cachedItem.action}")
         when (cachedItem.action) {
             MenuAction.NEXT_PAGE, MenuAction.PREVIOUS_PAGE -> {
@@ -128,7 +128,7 @@ class ResizeMenu(private val plugin: AliienResize) {
             }
 
             MenuAction.FILTER -> {
-                openMenu(player, page, colorFilter.getNext())
+                openMenu(player, page, sizeFilter.getNext())
             }
 
             MenuAction.NONE -> {}
