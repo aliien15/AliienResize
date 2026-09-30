@@ -236,8 +236,8 @@ class AliienResize : JavaPlugin() {
         commandManager.locales.addMessage(Locale.ENGLISH, MessageKeys.ERROR_PREFIX, Messages.PREFIX)
         commandManager.locales.addMessage(Locale.ENGLISH, MessageKeys.PERMISSION_DENIED, Messages.NO_PERM)
 
+        commandManager.commandCompletions.registerCompletion("menu_filters") { listOf("all", "owned", "locked", "purchasable", "small", "big") }
         commandManager.commandCompletions.registerCompletion("resize_ids") { Sizes.SIZES_BY_ID.keys }
-
         commandManager.commandCompletions.registerCompletion("accessible_resize_ids") { c ->
             val player = c.player ?: return@registerCompletion emptyList()
             Sizes.SIZES_BY_ID.values

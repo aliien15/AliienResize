@@ -6,6 +6,7 @@ import com.aliiensmp.aliienResize.config.Messages
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
 import com.aliiensmp.aliienResize.menus.main.ResizeMenu
+import com.aliiensmp.aliienResize.menus.main.SizeFilter
 import com.aliiensmp.core.utils.DebugUtils
 import com.aliiensmp.core.utils.MessageUtils
 import org.bukkit.entity.Player
@@ -13,14 +14,23 @@ import org.bukkit.entity.Player
 @CommandAlias("resize")
 class PlayerCommands(plugin: AliienResize) : AbstractResizeCommand(plugin) {
 
+    companion object {
+        const val DEFAULT_MENU_FILTER = "all"
+    }
+
     @Default
     @Subcommand("menu")
     @CommandPermission("aliien.resize.menu")
     fun openMenu(player: Player) {
-        if (cannotUseInWorld(player)) return
+        openMenuFiltered(player, DEFAULT_MENU_FILTER)
+    }
 
-        ResizeMenu(plugin).openMenu(player, 1)
-
+    @Subcommand("menu")
+    @CommandPermission("aliien.resize.menu")
+    @CommandCompletion("@menu_filters")
+    fun openMenuFiltered(player: Player, filter: String) {
+        val filter = SizeFilter.fromString(filter)
+        ResizeMenu(plugin).openMenu(player, 1, filter)
         Settings.SUCCESS_SOUND?.play(player, Settings.SOUNDS_ENABLED)
     }
 
