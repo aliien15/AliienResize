@@ -22,6 +22,6 @@ class ExcellentEconomy(private val currencyName: String, override val suffix: St
 
     override fun withdraw(player: Player, amount: Double): Boolean {
         if (!hasBalance(player, amount)) return false
-        return api?.withdraw(player, currencyName, amount) ?: false 
+        return api?.withdraw(player, currencyName, amount) ?: false
     }
 }

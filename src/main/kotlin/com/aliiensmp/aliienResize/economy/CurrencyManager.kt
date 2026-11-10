@@ -58,17 +58,6 @@ class CurrencyManager(private val plugin: AliienResize) {
         )
 
         registerNamedCurrencies(
-            "hooks.coins-engine.enabled",
-            "CoinsEngine",
-            "hooks.coins-engine.currencies",
-            "COINSENGINE_",
-            null,
-            ::CoinsEngine,
-            "CoinsEngine",
-            "is in settings.yml but doesn't exist in CoinsEngine!"
-        )
-
-        registerNamedCurrencies(
             "hooks.excellent-economy.enabled",
             "ExcellentEconomy",
             "hooks.excellent-economy.currencies",
@@ -261,7 +250,7 @@ class CurrencyManager(private val plugin: AliienResize) {
     }
 
     private fun configuredCurrencyName(identifier: String, normalizedIdentifier: String): String? {
-        val prefixes = arrayOf("ULTRAECONOMY_", "COINSENGINE_", "EXCELLENTECONOMY_", "ECOBITS_", "REDISECONOMY_")
+        val prefixes = arrayOf("ULTRAECONOMY_", "EXCELLENTECONOMY_", "ECOBITS_", "REDISECONOMY_")
 
         return prefixes.firstOrNull { normalizedIdentifier.startsWith(it) }?.let { identifier.substring(it.length) }
     }

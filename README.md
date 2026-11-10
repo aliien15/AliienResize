@@ -20,7 +20,7 @@ Whether you want to sell sizes through your server's economy, grant them as VIP 
 
 * **Smart Collision Detection:** Mathematical bounding-box checks prevent players from clipping through ceilings or glitching into walls when growing.
 * **Folia & Highly Optimized:** All parts of this plugin have been highly optimized to ensure I will never be the reason your server TPS drops, as well as make sure the plugin will run fine in your Folia servers!
-* **Massive Economy Support:** Built-in adapter pattern supporting 10+ economy plugins, including *Vault, PlayerPoints, UltraEconomy, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy, CoinsEngine, and Experience levels.*
+* **Massive Economy Support:** Built-in adapter pattern supporting 10+ economy plugins, including *Vault, PlayerPoints, UltraEconomy, ExcellentEconomy, EcoBits, RoyaleEconomy, RedisEconomy, and Experience levels.*
 * **Custom Economies:** Natively build your own custom currency hooks directly in the config using PlaceholderAPI.
 * **World Blacklists:** Automatically reverts players to their default size (1.0x) upon entering restricted worlds.
 * **MiniMessage Support:** Full MiniMessage (`<gradient>`, `<bold>`) support across all menus, items, and messages, as well as legacy codes (`&f`, `&#ffffff`)
@@ -62,8 +62,30 @@ The reason this project is open source is just so you can directly contribute wi
 If you are a developer looking to contribute:
 1. Clone the repository.
 2. Ensure everything you do is in kotlin (while you could technically shove java code in here, I'd rather keep everything the same language)
-3. This project uses **Maven**. Run `mvn clean package` to build the jar.
+3. Use **Java 21** and **Maven**. First build and install the current [AliienCore](https://github.com/aliien15/AliienCore) checkout with `mvn --batch-mode --no-transfer-progress -Dmaven.test.skip=true clean install` in that repository. Then run `mvn clean verify` in this project. AliienCore `1.0.0` must be a current shaded build with JDBC drivers in provided scope; the version number alone does not identify its source revision.
+   AliienCore is bundled and relocated into AliienResize. It does not need to be installed as a server plugin. Keep service-resource merging enabled and JAR minimization disabled so JDBC providers and classes loaded through reflection survive packaging. Kotlin and the four JDBC drivers are loaded through the plugin descriptor's `libraries` list.
 4. Make sure your code is actually clean, safe, optimized and with no bugs or memory leaks (basically use common sense lol)
+
+## CI and local checks
+
+GitHub Actions runs file checks and a Java 21 Maven build on pull requests, pushes to `main`/`master`, and manual runs. CI installs AliienCore from the commit pinned in `.github/workflows/ci.yml`, verifies the final shaded JAR, and uploads that JAR. Update the pin when adopting a new framework revision. AliienCore must be accessible to the runner.
+
+Install [pre-commit](https://pre-commit.com/#install), then enable both hooks:
+
+```sh
+pre-commit install --hook-type pre-commit --hook-type pre-push
+pre-commit run --all-files
+```
+
+Commit checks validate whitespace, file endings, YAML/XML, merge conflicts, case conflicts, large additions, and private keys. Pre-push builds a temporary source copy and checks the packaged framework relocation, external driver declarations, plugin metadata, and default resources. Java 21, Maven, Python 3, and the current locally installed AliienCore are required. These checks do not launch Paper/Folia or test server runtime library loading.
+
+To run the same build and packaging checks manually:
+
+```sh
+python3 tests/run-checks.py
+# Preserve the current target directory:
+python3 tests/run-checks.py --isolated
+```
 
 ## 📄 License
 

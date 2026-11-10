@@ -52,7 +52,7 @@ hooks:
     suffix: "Quest Points"
   # Multi-currency plugins:
   # - Add each currency name/id you want to use under "currencies".
-  # - In color prices, use the plugin prefix + currency name/id. Example: "COINSENGINE_gems".
+  # - In color prices, use the plugin prefix + currency name/id. Example: "EXCELLENTECONOMY_gems".
   # - The %suffix% placeholder uses currency-suffixes.<currency> when set.
   # - If no suffix is set for a currency, %suffix% falls back to the raw currency name/id.
   # Example:
@@ -60,10 +60,6 @@ hooks:
   #   currency-suffixes:
   #     gems: " Gems"
   ultra-economy:
-    enabled: false
-    currencies: []
-    currency-suffixes: {}
-  coins-engine: # Legacy version of ExcellentEconomy, may not work correctly on newer minecraft versions
     enabled: false
     currencies: []
     currency-suffixes: {}

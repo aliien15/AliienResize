@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  file-checks:
+    name: Pre-commit file checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pre-commit==4.7.0
+      - run: pre-commit run --all-files --show-diff-on-failure
+
+  verify:
+    name: Build and verify plugin JAR
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out pinned AliienCore dependency
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: aliien15/AliienCore
+          ref: fc696f1e79d41d70d132c569e15fd34d110edfb3
+          path: .ci/AliienCore
+          persist-credentials: false
+      - uses: actions/setup-java@v5.7.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: |
+            pom.xml
+            .ci/AliienCore/pom.xml
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install shaded AliienCore dependency
+        working-directory: .ci/AliienCore
+        run: mvn --batch-mode --no-transfer-progress -Dmaven.test.skip=true clean install
+      - name: Build and verify packaged plugin
+        run: python3 tests/run-checks.py
+      - name: Upload verified plugin JAR
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: AliienResize
+          path: target/AliienResize-*.jar
+          if-no-files-found: error
+          retention-days: 14

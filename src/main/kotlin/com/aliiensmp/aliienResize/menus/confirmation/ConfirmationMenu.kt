@@ -1,5 +1,6 @@
 package com.aliiensmp.aliienResize.menus.confirmation
 
+import com.aliiensmp.aliienResize.AliienResize
 import com.aliiensmp.aliienResize.config.Confirmation
 import com.aliiensmp.aliienResize.config.Settings
 import com.aliiensmp.aliienResize.config.data.SizeNode
@@ -11,7 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.math.round
 
-class ConfirmationMenu {
+class ConfirmationMenu(private val plugin: AliienResize) {
 
     fun openMenu(player: Player, sizeNode: SizeNode, displayItem: ItemStack, onConfirm: Runnable, onCancel: Runnable) {
         val gui = AliienGUI(Confirmation.CONFIRMATION_MENU_TITLE, Confirmation.CONFIRMATION_MENU_ROWS)
@@ -36,15 +37,17 @@ class ConfirmationMenu {
 
             val clickableItem = when (buttonData.action) {
                 ConfirmationMenuAction.CONFIRM -> ClickableItem.of(item) { _: InventoryClickEvent? ->
-                    player.closeInventory()
-                    onConfirm.run()
+                    player.scheduler.run(plugin, { _ ->
+                        player.closeInventory()
+                        onConfirm.run()
+                    }, null)
                 }
 
                 ConfirmationMenuAction.CANCEL -> ClickableItem.of(item) { _: InventoryClickEvent? ->
-                    if (Settings.SOUNDS_ENABLED)
-                        Settings.CLICK_SOUND?.play(player)
-
-                    onCancel.run()
+                    player.scheduler.run(plugin, { _ ->
+                        Settings.CLICK_SOUND?.play(player, Settings.SOUNDS_ENABLED)
+                        onCancel.run()
+                    }, null)
                 }
 
                 ConfirmationMenuAction.NONE -> ClickableItem.empty(item)

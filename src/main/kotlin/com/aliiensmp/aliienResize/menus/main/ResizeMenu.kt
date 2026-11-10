@@ -64,7 +64,7 @@ class ResizeMenu(private val plugin: AliienResize) {
             val confirmationItem = cachedItem.availableItem.clone()
 
             ClickableItem.of(displayItem) {
-                handleSizeClick(player, sizeNode, page, confirmationItem)
+                player.scheduler.run(plugin, { _ -> handleSizeClick(player, sizeNode, page, confirmationItem) }, null)
             }
         }
     }
@@ -98,7 +98,9 @@ class ResizeMenu(private val plugin: AliienResize) {
             val clickableItem = if (MenuAction.NONE == cachedItem.action)
                 ClickableItem.empty(item)
             else
-                ClickableItem.of(item) { handleActionClick(player, cachedItem, page, sizeFilter) }
+                ClickableItem.of(item) {
+                    player.scheduler.run(plugin, { _ -> handleActionClick(player, cachedItem, page, sizeFilter) }, null)
+                }
             gui.setItem(cachedItem.slot, clickableItem)
         }
     }
@@ -145,7 +147,7 @@ class ResizeMenu(private val plugin: AliienResize) {
         if (sizeNode.price.isPurchasable) {
             DebugUtils.send("Size ${sizeNode.id} is purchasable. Processing logic for ${player.name}")
             if (Settings.CONFIRMATION_MENU_ENABLED) {
-                ConfirmationMenu().openMenu(player, sizeNode, confirmationItem, { handlePurchase(player, sizeNode) }, { openMenu(player, currentPage) })
+                ConfirmationMenu(plugin).openMenu(player, sizeNode, confirmationItem, { handlePurchase(player, sizeNode) }, { openMenu(player, currentPage) })
             } else {
                 handlePurchase(player, sizeNode)
             }

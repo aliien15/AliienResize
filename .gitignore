@@ -3,3 +3,7 @@ target/
 *.iml
 .DS_Store
 Thumbs.db
+
+# CI dependency checkout and Python check caches
+.ci/
+__pycache__/
